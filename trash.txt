@@ -1,0 +1,379 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+"""
+Created on Fri Jan 31 17:48:09 2020
+
+@author: dycon
+"""
+
+#=============================================================================#
+    
+### UN EXEMPLE
+#samples = 150
+#data = datasets.make_blobs(n_samples=samples, centers=2, random_state=2)
+### X est un tableau de 2 lignes, contenant n_samples points dans R2.
+### La premiere ligne contient les coordonnées horizontales, et la 
+### seconde les coordonées verticales.
+#X = data[0].T
+### y est un tableau contenant 1 ligne de longeur n_samples, chaque
+### composante de cette ligne etant soit 0 ou 1 et correspondant a
+### un point de R2 stoqué dans la liste X.
+#y = np.expand_dims(data[1], 1).T
+#
+### On initialise le reseau de neurones par la classe Neural Network.
+### En l'occurence, nous avons crée un reseau avec 3 couches, dont
+### une couche cachée contenant 3 neurones. La couche input/entrée
+### a 2 neurones, un pour chaque composante de l'input x \in R2, 
+### et la couche output/sortie a 1 neurone, qui donne donc un 
+### chiffre, qui sera par suite tronqué afin de avoir 0 ou 1.
+#neural_net = nn.NeuralNetwork([2, 2, 2, 1], seed=0)
+### epochs = nombre d'iterations maximales dans la methode d'optimisation 
+### learning_rate: l'iteration est de la forme \theta^{n+1} = \theta^{n} - learning_rate*cost_derivative(\theta^n)
+#
+## c'est bizarre mais ça ne marche pas avec batch_size >= 25
+#history = neural_net.train(X=X, y=y, batch_size=16, epochs=1000, learning_rate=0.4, print_every=200, validation_split=0.2,
+#                          tqdm_=False, plot_every=20)
+#
+### En fait, la fonction train va plotter automatiquement les résultats, 
+### donc pas besoin de faire des plots ici.
+#
+### On affiche les valeurs des transformations dans chaque couche
+#pre_activ = history['pre_activ']
+#activ = history['activ']
+#weights = history['weights']
+#biases = history['biases']
+#
+#z0 = X
+#
+#### 2D in hidden layer
+#z1 = np.array([lambdas(weights[0], biases[0], [ [z0[0][i]], [z0[1][i]] ]) for i in range(samples)])
+###sig_z1 = np.array([ sigmas(z) for z in z1  ])
+#sig_z1 = np.array([sigmas(weights[0], biases[0], [ [z0[0][i]], [z0[1][i]] ]) for i in range(samples)])
+#Z1 = np.array( [[x[0][0] for x in z1], [x[1][0] for x in z1 ]])
+#sig_Z1 = np.array( [ [s[0][0] for s in sig_z1], [s[1][0] for s in sig_z1] ]  )
+#
+#
+#z2 = np.array([lambdas(weights[1], biases[1], [ [Z1[0][i]], [Z1[1][i]] ]) for i in range(samples)])
+#sig_z2 = np.array([sigmas(weights[1], biases[1], [ [Z1[0][i]], [Z1[1][i]] ]) for i in range(samples)])
+# 
+#Z2 = np.array([[x[0][0] for x in z2], [x[1][0] for x in z2]] )
+#sig_Z2 = np.array( [[s[0][0] for s in sig_z2], [s[1][0] for s in sig_z2]] )
+#
+#
+#
+#plt.figure(figsize=(10, 10))
+## On affiche aussi le jeu de données separément, juste comme ça
+#plt.scatter(X.T[:, 0], X.T[:, 1], c=y.T.reshape(-1), cmap = plt.cm.jet, alpha=0.55)
+#plt.xlabel(r'$x_1$ coordinate')
+#plt.ylabel(r'$x_2$ coordinate')
+#plt.title(r'The {} data points'.format(samples))
+#plt.savefig('z0.png', dpi=600)
+# 
+#plt.figure(figsize=(10, 10))
+#plt.scatter(Z1.T[:, 0], Z1.T[:, 1], c=y.T.reshape(-1), cmap=plt.cm.jet, alpha=0.55)
+#plt.xlabel(r'$x_1$ coordinate')
+#plt.ylabel(r'$x_2$ coordinate')
+#plt.title(r'Transformed data: $\Lambda_1 = A^0 x + b^0$')
+#plt.savefig('lambda1.png', dpi=600)
+#plt.show()
+# 
+# 
+#plt.figure(figsize=(10, 10))
+#plt.scatter(sig_Z1.T[:, 0], sig_Z1.T[:, 1], c=y.T.reshape(-1), cmap = plt.cm.jet, alpha=0.55)
+#plt.xlabel(r'$x_1$ coordinate')
+#plt.ylabel(r'$x_2$ coordinate')
+#plt.title(r'First hidden layer output: $z^1 = \sigma(A^0 x + b^0)$')
+#plt.savefig('z1.png', dpi=600)
+#plt.show()
+##
+#plt.figure(figsize=(10, 10))
+#plt.scatter(Z2.T[:, 0], Z2.T[:, 1], c=y.T.reshape(-1), cmap=plt.cm.jet, alpha=0.55)
+#plt.xlabel(r'$x_1$ coordinate')
+#plt.ylabel(r'$x_2$ coordinate')
+#plt.title(r'Transformed data: $\Lambda_2 = A^1 x + b^1$')
+#plt.savefig('lambda2.png', dpi=600)
+#plt.show()
+#
+#plt.figure(figsize=(10, 10))
+#plt.scatter(sig_Z2.T[:, 0], sig_Z2.T[:, 1], c=y.T.reshape(-1), cmap = plt.cm.jet, alpha=0.55)
+#plt.xlabel(r'$x_1$ coordinate')
+#plt.ylabel(r'$x_2$ coordinate')
+#plt.title(r'Second hidden layer output: $z^2 = \sigma(A^1 z^1 + b^1)$')
+#plt.savefig('z2.png', dpi=600)
+#plt.show()
+
+#
+###-----------------------------------------
+#### 3D IN hidden layer
+#z1 = np.array([lambdas(weights[0], biases[0], [ [z0[0][i]], [z0[1][i]] ]) for i in range(samples)])
+#sig_z1 = np.array([sigmas(weights[0], biases[0], [ [z0[0][i]], [z0[1][i]] ]) for i in range(samples)])
+#Z1 = np.array( [[x[0][0] for x in z1], [x[1][0] for x in z1 ], [x[2][0] for x in z1]])
+#sig_Z1 = np.array( [ [s[0][0] for s in sig_z1], [s[1][0] for s in sig_z1], [s[2][0] for s in sig_z1] ]  )
+#
+#z2 = np.array([lambdas(weights[1], biases[1], [ [Z1[0][i]], [Z1[1][i]], [Z1[2][i]] ]) for i in range(samples)])
+#sig_z2 = np.array([sigmas(weights[1], biases[1], [ [Z1[0][i]], [Z1[1][i]], [Z1[2][i]] ]) for i in range(samples)])
+#Z2 = np.array( [[x[0][0] for x in z2], [x[1][0] for x in z2 ], [x[2][0] for x in z2]])
+#sig_Z2 = np.array( [ [s[0][0] for s in sig_z2], [s[1][0] for s in sig_z2], [s[2][0] for s in sig_z2] ]  )
+#
+#
+#plt.figure(figsize=(10, 10))
+##plt.gca().spines['top'].set_visible(False)
+##plt.gca().spines['right'].set_visible(False)
+#plt.xlabel(r'$x_1$ coordinate')
+#plt.ylabel(r'$x_2$ coordinate')
+### On affiche aussi le jeu de données separément, juste comme ça
+#plt.scatter(X.T[:, 0], X.T[:, 1], c=y.T.reshape(-1), cmap = plt.cm.jet, alpha=0.55)
+#plt.title(r'The {} data points'.format(samples))
+#plt.savefig('z0.png', dpi=600)
+#
+#fig = plt.figure()
+#ax = Axes3D(fig)
+#ax.scatter(Z1.T[:, 0], Z1.T[:, 1], Z1.T[:, 2], c=y.T.reshape(-1), cmap=plt.cm.jet, alpha=0.55)
+#plt.xlabel(r'$x_1$ coordinate')
+#plt.ylabel(r'$x_2$ coordinate')
+#plt.title(r'Transformed data: $\Lambda_1 = A^0 x + b^0$')
+#plt.savefig('lambda1.png', dpi=600)
+#plt.show()
+#
+#fig = plt.figure()
+#ax = Axes3D(fig)
+#ax.scatter(sig_Z1.T[:, 0], sig_Z1.T[:, 1], sig_Z1.T[:, 2], c=y.T.reshape(-1), cmap=plt.cm.jet, alpha=0.75)
+#plt.xlabel(r'$x_1$ coordinate')
+#plt.ylabel(r'$x_2$ coordinate')
+#plt.title(r'First hidden layer output: $z^1 = \sigma(A^0 x + b^0)$')
+#plt.savefig('z1.png', dpi=600)
+#plt.show()
+#
+#fig = plt.figure()
+#ax = Axes3D(fig)
+#ax.scatter(Z2.T[:, 0], Z2.T[:, 1], Z2.T[:, 2], c=y.T.reshape(-1), cmap=plt.cm.jet, alpha=0.75)
+#plt.xlabel(r'$x_1$ coordinate')
+#plt.ylabel(r'$x_2$ coordinate')
+#plt.title(r'Second linear transform: $\Lambda_2 = A^1 z^1 + b^1$')
+#plt.savefig('lambda2.png', dpi=600)
+#plt.show()
+#
+#fig = plt.figure()
+#ax = Axes3D(fig)
+#ax.scatter(sig_Z2.T[:, 0], sig_Z2.T[:, 1], sig_Z2.T[:, 2], c=y.T.reshape(-1), cmap=plt.cm.jet, alpha=0.75)
+#plt.xlabel(r'$x_1$ coordinate')
+#plt.ylabel(r'$x_2$ coordinate')
+#plt.title(r'Second hidden layer output: $z^2 = \sigma(A^1 z^1 + b^1)$')
+#plt.savefig('z2.png', dpi=600)
+#plt.show()
+#
+#
+##print(np.shape(Z1))
+##print(np.shape(pre_activ[0]))
+
+#=============================================================================#
+
+# =============================================================================
+# ## Un autre jeu de données (les spirales)
+#
+#samples = 250
+#data = datasets.make_moons(n_samples = samples, noise=0.2)
+#X = data[0].T
+#y = np.expand_dims(data[1], 1).T
+# 
+#neural_net = nn.NeuralNetwork([2, 10, 1], seed=2)
+#history = neural_net.train(X=X, y=y, batch_size=48, epochs=20000, learning_rate=0.4, print_every=200, validation_split=0.2,
+#                           tqdm_=False, plot_every=1000)
+# 
+#weights = history['weights']
+#biases = history['biases']
+# 
+#z0 = X
+#
+##z1 = np.array([lambdas(weights[0], biases[0], [ [z0[0][i]], [z0[1][i]] ]) for i in range(samples)])
+##sig_z1 = np.array([sigmas(weights[0], biases[0], [ [z0[0][i]], [z0[1][i]] ]) for i in range(samples)])
+##Z1 = np.array( [[x[0][0] for x in z1], [x[1][0] for x in z1 ]])
+##sig_Z1 = np.array( [ [s[0][0] for s in sig_z1], [s[1][0] for s in sig_z1] ]  )
+## 
+##z2 = np.array([lambdas(weights[1], biases[1], [ [Z1[0][i]], [Z1[1][i]] ]) for i in range(samples)])
+##sig_z2 = np.array([sigmas(weights[1], biases[1], [ [Z1[0][i]], [Z1[1][i]] ]) for i in range(samples)])
+## 
+##Z2 = np.array([[x[0][0] for x in z2], [x[1][0] for x in z2]] )
+##sig_Z2 = np.array( [[s[0][0] for s in sig_z2], [s[1][0] for s in sig_z2]] )
+## 
+##plt.figure(figsize=(10, 10))
+### On affiche aussi le jeu de données separément, juste comme ça
+##plt.scatter(X.T[:, 0], X.T[:, 1], c=y.T.reshape(-1), cmap = plt.cm.jet, alpha=0.55)
+##plt.xlabel(r'$x_1$ coordinate')
+##plt.ylabel(r'$x_2$ coordinate')
+##plt.title(r'The {} data points'.format(samples))
+##plt.savefig('z0.png', dpi=600)
+# 
+##plt.figure(figsize=(10, 10))
+##plt.scatter(Z1.T[:, 0], Z1.T[:, 1], c=y.T.reshape(-1), cmap=plt.cm.jet, alpha=0.55)
+##plt.xlabel(r'$x_1$ coordinate')
+##plt.ylabel(r'$x_2$ coordinate')
+##plt.title(r'Transformed data: $\Lambda_1 = A^0 x + b^0$')
+##plt.savefig('lambda1.png', dpi=600)
+##plt.show()
+## 
+## 
+##plt.figure(figsize=(10, 10))
+##plt.scatter(sig_Z1.T[:, 0], sig_Z1.T[:, 1], c=y.T.reshape(-1), cmap = plt.cm.jet, alpha=0.55)
+##plt.xlabel(r'$x_1$ coordinate')
+##plt.ylabel(r'$x_2$ coordinate')
+##plt.title(r'First hidden layer output: $z^1 = \sigma(A^0 x + b^0)$')
+##plt.savefig('z1.png', dpi=600)
+##plt.show()
+##
+##plt.figure(figsize=(10, 10))
+##plt.scatter(Z2.T[:, 0], Z2.T[:, 1], c=y.T.reshape(-1), cmap=plt.cm.jet, alpha=0.55)
+##plt.xlabel(r'$x_1$ coordinate')
+##plt.ylabel(r'$x_2$ coordinate')
+##plt.title(r'Transformed data: $\Lambda_2 = A^1 x + b^1$')
+##plt.savefig('lambda2.png', dpi=600)
+##plt.show()
+##
+##plt.figure(figsize=(10, 10))
+##plt.scatter(sig_Z2.T[:, 0], sig_Z2.T[:, 1], c=y.T.reshape(-1), cmap = plt.cm.jet, alpha=0.55)
+##plt.xlabel(r'$x_1$ coordinate')
+##plt.ylabel(r'$x_2$ coordinate')
+##plt.title(r'Second hidden layer output: $z^2 = \sigma(A^1 z^1 + b^1)$')
+##plt.savefig('z2.png', dpi=600)
+##plt.show()
+#
+##
+###-----------------------------------------
+##### 3D IN hidden layer
+#z1 = np.array([lambdas(weights[0], biases[0], [ [z0[0][i]], [z0[1][i]] ]) for i in range(samples)])
+#sig_z1 = np.array([sigmas(weights[0], biases[0], [ [z0[0][i]], [z0[1][i]] ]) for i in range(samples)])
+#Z1 = np.array( [[x[0][0] for x in z1], [x[1][0] for x in z1 ], [x[2][0] for x in z1]])
+#sig_Z1 = np.array( [ [s[0][0] for s in sig_z1], [s[1][0] for s in sig_z1], [s[2][0] for s in sig_z1] ]  )
+#
+#
+#z2 = np.array([lambdas(weights[1], biases[1], [ [Z1[0][i]], [Z1[1][i]], [Z1[2][i]] ]) for i in range(samples)])
+#sig_z2 = np.array([sigmas(weights[1], biases[1], [ [Z1[0][i]], [Z1[1][i]], [Z1[2][i]] ]) for i in range(samples)])
+#Z2 = np.array( [[x[0][0] for x in z2], [x[1][0] for x in z2 ], [x[2][0] for x in z2]])
+#sig_Z2 = np.array( [ [s[0][0] for s in sig_z2], [s[1][0] for s in sig_z2], [s[2][0] for s in sig_z2] ]  )
+#
+#plt.figure(figsize=(10, 10))
+##plt.gca().spines['top'].set_visible(False)
+##plt.gca().spines['right'].set_visible(False)
+#plt.xlabel(r'$x_1$ coordinate')
+#plt.ylabel(r'$x_2$ coordinate')
+### On affiche aussi le jeu de données separément, juste comme ça
+#plt.scatter(X.T[:, 0], X.T[:, 1], c=y.T.reshape(-1), cmap = plt.cm.jet, alpha=0.55)
+#plt.title(r'The {} data points'.format(samples))
+#plt.savefig('z0.png', dpi=600)
+#
+#fig = plt.figure()
+#ax = Axes3D(fig)
+#ax.scatter(Z1.T[:, 0], Z1.T[:, 1], Z1.T[:, 2], c=y.T.reshape(-1), cmap=plt.cm.jet, alpha=0.55)
+#plt.xlabel(r'$x_1$ coordinate')
+#plt.ylabel(r'$x_2$ coordinate')
+#plt.title(r'Transformed data: $\Lambda_1 = A^0 x + b^0$')
+#plt.savefig('lambda1.png', dpi=600)
+#plt.show()
+#
+#fig = plt.figure()
+#ax = Axes3D(fig)
+#ax.scatter(sig_Z1.T[:, 0], sig_Z1.T[:, 1], sig_Z1.T[:, 2], c=y.T.reshape(-1), cmap=plt.cm.jet, alpha=0.55)
+#plt.xlabel(r'$x_1$ coordinate')
+#plt.ylabel(r'$x_2$ coordinate')
+#plt.title(r'First hidden layer output: $z^1 = \sigma(A^0 x + b^0)$')
+#plt.savefig('z1.png', dpi=600)
+#plt.show()
+#
+#
+#fig = plt.figure()
+#ax = Axes3D(fig)
+#ax.scatter(z2.T[:, 0], z2.T[:, 1], z2.T[:, 2], c=y.T.reshape(-1), cmap=plt.cm.jet, alpha=0.55)
+#plt.xlabel(r'$x_1$ coordinate')
+#plt.ylabel(r'$x_2$ coordinate')
+#plt.title(r'Second linear transform: $\lambda_2 = a^1 z^1 + b^1$')
+#plt.savefig('lambda2.png', dpi=600)
+#plt.show()
+#
+#fig = plt.figure()
+#ax = Axes3D(fig)
+#ax.scatter(sig_Z2.T[:, 0], sig_Z2.T[:, 1], sig_Z2.T[:, 2], c=y.T.reshape(-1), cmap=plt.cm.jet, alpha=0.55)
+#plt.xlabel(r'$x_1$ coordinate')
+#plt.ylabel(r'$x_2$ coordinate')
+#plt.title(r'Second hidden layer output: $z^2 = \sigma(a^1 z^1 + b^1)$')
+#plt.savefig('z2.png', dpi=600)
+#plt.show()
+
+# =============================================================================
+
+
+
+#=============================================================================#
+
+### Un troisième jeu de données: les points aléatoires
+#
+#data_ = make_classification(n_features=2, n_redundant=0, n_informative=2,
+#                             n_clusters_per_class=1)
+#
+#X_ = data_[0].T
+#y_ = np.expand_dims(data_[1], 1).T
+#
+#rand_data = rand_pts(500, (2,2), 2)
+#X = np.array([[x for x in y] for y in rand_data[0]]).T
+#y = np.array([rand_data[1]])
+#
+#
+#neural_net = nn.NeuralNetwork([2, 3, 1], seed=0)
+#
+#history = neural_net.train(X=X, y=y, batch_size=16, epochs=100, learning_rate=0.4, print_every=200, validation_split=0.2,
+#                          tqdm_=False, plot_every=20)
+#
+#plt.scatter(X.T[:, 0], X.T[:, 1], c=y.T.reshape(-1), cmap = plt.cm.jet, alpha=0.75)
+
+#=============================================================================#
+#
+
+#
+#samples = 500
+##X, y = generate_points(500, [(0, 0), (0, 1), (1, 0), (1, 1), (1,2), (2,1), (0,2), (2,0), (2,2)], [0, 1, 1, 0, 1, 1, 0, 0, 0], 0.005)
+#X, y = generate_points(samples, [(0, 0), (0, 1), (1, 0), (1, 1)], [0, 1, 1, 0], 0.005)
+#
+##neural_net = nn.NeuralNetwork([2, 4, 4, 1], seed=3)
+##history = neural_net.train(X=X, y=y, batch_size=64, epochs=3000, learning_rate=0.2, print_every=200, validation_split=0.2,
+##                          tqdm_=False, plot_every=25)
+##
+##pre_activ = history['pre_activ']
+##activ = history['activ']
+##weights = history['weights']
+##biases = history['biases']
+##
+##z0 = X
+##
+#### 2D in hidden layer
+##z1 = np.array([lambdas(weights[0], biases[0], [ [z0[0][i]], [z0[1][i]] ]) for i in range(samples)])
+##sig_z1 = np.array([sigmas(weights[0], biases[0], [ [z0[0][i]], [z0[1][i]] ]) for i in range(samples)])
+##Z1 = np.array( [[x[0][0] for x in z1], [x[1][0] for x in z1 ]])
+##sig_Z1 = np.array( [ [s[0][0] for s in sig_z1], [s[1][0] for s in sig_z1] ]  )
+##
+###z2 = np.array([lambdas(weights[1], biases[1], [ [Z1[0][i]], [Z1[1][i]] ]) for i in range(samples)])
+###sig_z2 = np.array([sigmas(weights[1], biases[1], [ [Z1[0][i]], [Z1[1][i]] ]) for i in range(samples)])
+##
+###Z2 = np.array([x[0][0] for x in z2] )
+###sig_Z2 = np.array( [s[0][0] for s in sig_z2] )
+##
+##
+##plt.figure(figsize=(10, 10))
+### On affiche aussi le jeu de données separément, juste comme ça
+#plt.scatter(X.T[:, 0], X.T[:, 1], c=y.T.reshape(-1), cmap = plt.cm.jet, alpha=0.55)
+#plt.xlabel(r'$x_1$ coordinate')
+#plt.ylabel(r'$x_2$ coordinate')
+#plt.title(r'The data')
+#plt.savefig('z0.png', dpi=600)
+##
+##plt.figure(figsize=(10,10))
+##plt.scatter(Z1.T[:, 0], Z1.T[:, 1], c=y.T.reshape(-1), cmap=plt.cm.jet, alpha=0.55)
+##plt.xlabel(r'$x_1$ coordinate')
+##plt.ylabel(r'$x_2$ coordinate')
+##plt.title(r'The data')
+##plt.savefig('lambda1.png', dpi=600)
+##
+##plt.figure(figsize=(10,10))
+##plt.scatter(sig_Z1.T[:, 0], sig_Z1.T[:, 1], c=y.T.reshape(-1), cmap = plt.cm.jet, alpha=0.55)
+##plt.xlabel(r'$x_1$ coordinate')
+##plt.ylabel(r'$x_2$ coordinate')
+##plt.title(r'The data')
+##plt.savefig('z1.png', dpi=600)
