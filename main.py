@@ -18,6 +18,8 @@ import copy
 from sklearn import datasets
 from sklearn.datasets import make_classification
 import neural_net as nn
+import seaborn as sns
+sns.set(style="darkgrid")
 
 # Colormap options: plt.cm.jet, plt.cm.coolwarm, plt.cm.viridis
 
@@ -180,19 +182,50 @@ def simulate(samples, data_="blobs", architecture=[2, 2, 1]):
         plt.ylabel(r'$x_2$ coordinate', fontdict = {'fontsize' : 12})
         plt.title(r'Transformed data: $\Lambda_{} = A^{} x + b^{}$'.format(i, i, i), fontdict = {'fontsize' : 18})
     
+    
     for j, sig in enumerate(layers):
-        # Ici on affiche aussi encore une fois les points de depart
-        # faut que je repare ça 
-        plt.figure()
-        if len(sig) == 2:
-            plt.scatter(sig.T[:, 0], sig.T[:, 1], c=y.T.reshape(-1), cmap=plt.cm.coolwarm, alpha=0.55)
-        else:
+        if j==0:
+            # Don't want to show input layer as we already plot it
             pass
-        plt.xlabel(r'$x_1$ coordinate', fontdict = {'fontsize' : 12})
-        plt.ylabel(r'$x_2$ coordinate', fontdict = {'fontsize' : 12})
-        plt.title(r'{}st hidden layer: $z^{} = \sigma(A^{} z^{} + b^{})$'.format(j+1, j+1, j, j, j), 
-                  fontdict = {'fontsize' : 18})
+        else:
+            plt.figure()
+            if len(sig) == 2:
+                plt.scatter(sig.T[:, 0], sig.T[:, 1], c=y.T.reshape(-1), cmap=plt.cm.coolwarm, alpha=0.55)
+            else:
+                pass
+            plt.xlabel(r'$x_1$ coordinate', fontdict = {'fontsize' : 12})
+            plt.ylabel(r'$x_2$ coordinate', fontdict = {'fontsize' : 12})
+            plt.title(r'{}st hidden layer: $z^{} = \sigma(A^{} z^{} + b^{})$'.format(j, j, j-1, j-1, j-1), 
+                      fontdict = {'fontsize' : 18})
 
 if __name__ == "__main__":
     simulate(150, 'blobs')
-
+    
+    # Try to just plot the activation functions 
+    x1 = np.linspace(-10, 10, 200)
+    x2 = np.linspace(-3, 3, 100)
+    y1 = list()
+    y2 = list()
+    for z in x1:
+        y1.append(nn.sigmoid(z))
+    for z in x2:
+        y2.append(nn.relu(z))
+    
+    for i in range(2):    
+        plt.figure()
+        plt.grid(True)
+        #plt.rc('grid', linestyle="-.", color='r')
+        
+        if i==0:
+            plt.plot(x1, y1, color='blue', linewidth=3, alpha=0.55, linestyle='-', label=r'$\sigma(x) = (1+e^{-x})^{-1}$')
+            plt.title(r'The sigmoid activation function', fontdict={'fontsize': 12})
+            plt.xlim(-10, 10)
+            plt.ylim(-0.01, 1.01)
+        else:
+            plt.plot(x2, y2, color='blue', linewidth=3, alpha=0.55, linestyle='-', label=r'$\sigma(x) = \max(x, 0)$')            
+            plt.title(r'The ReLU activation function', fontdict={'fontsize': 12})
+            plt.xlim(-3, 3)
+        plt.xlabel(r'x')
+        plt.ylabel(r'$\sigma(x)$')
+        plt.legend(loc=2, prop={'size': 14.5})
+        
