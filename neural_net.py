@@ -244,25 +244,68 @@ class NeuralNetwork(object):
         """
         X, y = X.T, y.T 
         
-        # We define the delimitors for the figure
-        x_min, x_max = X[:, 0].min()-0.5, X[:, 0].max()+0.5
-        y_min, y_max = X[:, 1].min()-0.5, X[:, 1].max()+0.5
+        if np.shape(X)[1] >=2:
         
-        # We generate a 2d grid
-        xx, yy = np.meshgrid(np.arange(x_min, x_max, res),
-                            np.arange(y_min, y_max, res))
+            # We define the delimitors for the figure
+            x_min, x_max = X[:, 0].min()-0.5, X[:, 0].max()+0.5
+            y_min, y_max = X[:, 1].min()-0.5, X[:, 1].max()+0.5
+            
+            # We generate a 2d grid
+            xx, yy = np.meshgrid(np.arange(x_min, x_max, res),
+                                np.arange(y_min, y_max, res))
+            
+            Z = self.predict(np.c_[xx.ravel(), yy.ravel()].T)
+            Z = Z.reshape(xx.shape)
+            plt.contourf(xx, yy, Z, cmap = plt.cm.coolwarm, alpha=0.35)
+            plt.xlim(xx.min(), xx.max())
+            plt.ylim(yy.min(), yy.max())
+            # We superpose the data points
+            plt.scatter(X[:, 0], X[:, 1], c=y.reshape(-1), cmap = plt.cm.coolwarm, alpha=0.55)
+            message = r'Truncated output of $\sigma(A^L z^L+b^L)$ at iteration: {} '.format(iteration+1)
+            plt.xlabel(r'$x_1$ coordinate', fontdict = {'fontsize' : 12})
+            plt.ylabel(r'$x_2$ coordinate', fontdict = {'fontsize' : 12})
+            plt.title(message, fontdict = {'fontsize' : 18})
         
-        Z = self.predict(np.c_[xx.ravel(), yy.ravel()].T)
-        Z = Z.reshape(xx.shape)
-        plt.contourf(xx, yy, Z, cmap = plt.cm.coolwarm, alpha=0.35)
-        plt.xlim(xx.min(), xx.max())
-        plt.ylim(yy.min(), yy.max())
-        # We superpose the data points
-        plt.scatter(X[:, 0], X[:, 1], c=y.reshape(-1), cmap = plt.cm.coolwarm, alpha=0.55)
-        message = r'Truncated output of $\sigma(A^L z^L+b^L)$ at iteration: {} '.format(iteration+1)
-        plt.xlabel(r'$x_1$ coordinate', fontdict = {'fontsize' : 12})
-        plt.ylabel(r'$x_2$ coordinate', fontdict = {'fontsize' : 12})
-        plt.title(message, fontdict = {'fontsize' : 18})
+        else:
+            
+            x_min = X[:, 0].min() -0.5
+            x_max = X[:, 0].max() +0.5
+            
+            xx = np.arange(x_min, x_max, res)
+            
+            Z = self.predict(np.c_[xx.ravel()].T)
+            Z = Z.reshape(xx.shape)
+            #print(xx[Z>0])
+            
+            #plt.contourf(xx, yy, Z, cmap = plt.cm.coolwarm, alpha=0.35)
+            plt.xlim(xx.min(), xx.max())
+            plt.ylim(-0.1, 1.1)
+            # We superpose the data points
+            red = list()
+            blue = list()
+   
+            z0 = X.T
+            #print(z0[0])
+            for i, ix in enumerate(z0[0]):
+                if y.T[0][i] == 0:
+                    red.append(ix)
+                else:
+                    blue.append(ix)
+                
+            plt.plot(blue, len(blue)*[0], 'o', c='r')
+        
+            plt.plot(red, len(red)*[0], 'o', c='b')
+            
+            #plt.plot(xx, Z)
+            plt.plot(xx[Z>0], (Z[Z>0]), c= 'r', linewidth=5)
+            plt.plot(xx[Z==0], (Z[Z==0]+np.ones(len(Z[Z==0]))), c='b', linewidth=5)
+            
+            #plt.scatter(X[:, 0], X[:, 1], c=y.reshape(-1), cmap = plt.cm.coolwarm, alpha=0.55)
+            message = r'Truncated output of $\sigma(A^L z^L+b^L)$ at iteration: {} '.format(iteration+1)
+            plt.xlabel(r'$x_1$ coordinate', fontdict = {'fontsize' : 12})
+            #plt.ylabel(r'$x_2$ coordinate', fontdict = {'fontsize' : 12})
+            plt.title(message, fontdict = {'fontsize' : 18})
+            
         
         # Fix this
         #plt.savefig('figures/fig_%s.png' % iteration, dpi=450)                                                                                                  val_acc)
