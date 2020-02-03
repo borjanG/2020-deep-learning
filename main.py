@@ -7,7 +7,7 @@ Created on Thu Jan 21 14:31:41 2020
 """
 
 __author__ = "Borjan Geshkovski"
-__version__ = "0.1"
+__version__ = "0.2"
 
 from matplotlib import pyplot as plt
 from mpl_toolkits.mplot3d import Axes3D
@@ -100,23 +100,26 @@ def simulate(samples, features=2, data_="blobs", architecture=[2, 2, 1]):
     # of predefined strings
     # By default, cluster_std=1.0 in blobs and random_state = 2
     
-    datasets_ = {'blobs': datasets.make_blobs(n_samples=samples, n_features=features, centers=2, cluster_std=5, random_state=3), 
+    datasets_ = {'blobs': datasets.make_blobs(n_samples=samples, n_features=features, centers=2, cluster_std=1, random_state=2), 
                  'spirals': datasets.make_moons(n_samples=samples, noise=0.2),
-                 'chess': generate_points(samples, [(0, 0), (0, 1), (1, 0), (1, 1)], [0, 1, 1, 0], 0.005)}
+                 'chess': generate_points(samples, [(0, 0), (0, 1), (1, 0), (1, 1)], [0, 1, 1, 0], 0.005),
+                 'random': np.array([rand.sample(range(-4, 4), samples)])}
     data = datasets_[data_]
     
     if data_ == "chess":
         X, y = data
+    elif data_ == "random":
+        X = data
+        y = np.array([[rand.randint(0, 1) for i in range(len(data[0]))]])
     else:
         X = data[0].T
-        y = np.expand_dims(data[1], 1).T
-    
-#    if features == 1:
-#        aux = np.array( [ [0 for i in range(len(X[0]))]  ]  )
-#        X = np.concatenate((X, aux))
+        y = np.expand_dims(data[1], 1).T   
+    print(np.shape(X))
+    print(np.shape(y))
+    print(y)
         
     neural_net = nn.NeuralNetwork(architecture, seed=0)
-    history = neural_net.train(X=X, y=y, batch_size=16, epochs=5000, learning_rate=0.3, 
+    history = neural_net.train(X=X, y=y, batch_size=8, epochs=5000, learning_rate=0.3, 
                                print_every=1000, validation_split=0.2, tqdm_=False,
                                plot_every=2500)
     weights, biases = history['weights'], history['biases']
@@ -134,20 +137,19 @@ def simulate(samples, features=2, data_="blobs", architecture=[2, 2, 1]):
                 blue.append(x)
                 
         plt.figure()
-        plt.plot(blue, len(blue)*[0], 'o', c='r')
-        
-        plt.plot(red, len(red)*[0], 'o', c='b')
-        plt.title('The data points', fontdict={'fontsize':12})
-        plt.show()
+        plt.plot(blue, len(blue)*[0], 'o', c='r', alpha=0.55)
+        plt.plot(red, len(red)*[0], 'o', c='b', alpha=0.55)
+        plt.xlabel(r'$x\in$ ℝ coordinate', fontdict = {'fontsize' : 12})
+        plt.yticks(color='w')
+        plt.title(r'The N={} data points'.format(samples), fontdict = {'fontsize' : 18})
     else:
-         #####We plot the data points
         plt.figure()
         plt.scatter(z0.T[:, 0], z0.T[:, 1], c=y.T.reshape(-1), cmap = plt.cm.coolwarm, alpha=0.55)
         plt.xlabel(r'$x_1$ coordinate', fontdict = {'fontsize' : 12})
         plt.ylabel(r'$x_2$ coordinate', fontdict = {'fontsize' : 12})
-        plt.title(r'The {} data points'.format(samples), fontdict = {'fontsize' : 18})
+        plt.title(r'The N={} data points'.format(samples), fontdict = {'fontsize' : 18})
     
-    # Faut que je repare ça 
+    # /!\ Faut que je repare ça /!\
     #plt.savefig('{}/{}/z0.png'.format(data_, samples), dpi=450)
     
     lambda_ = list()
@@ -156,14 +158,12 @@ def simulate(samples, features=2, data_="blobs", architecture=[2, 2, 1]):
     
     if len(architecture)>2:
         for k in range(1, len(architecture)):
-            # For the moment, the code here is not pretty
+            # /!\ For the moment, the code here is not pretty
             # and quite repetitive. I would like to declutter it
-            # quite a bit.
+            # quite a bit. /!\
             
             # We can only visualize up to 3d
             if architecture[k]==1: 
-                print(np.shape(layers[k-1]))
-                #_ = copy.deepcopy( [  lambdas(weights[k-1], biases[k-1],  ]  )
                 _ = copy.deepcopy(  [ lambdas(weights[k-1], biases[k-1], 
                                       [[layers[k-1][0][i]], [layers[k-1][1][i]]] ) 
                                       for i in range(samples)]  )
@@ -216,7 +216,7 @@ def simulate(samples, features=2, data_="blobs", architecture=[2, 2, 1]):
             else:
                 pass
     else:
-        # For the moment, we do nothing in this case
+        # For the moment, we do nothing in this case /!\
         pass
     
     # Plotting the linear transitions
@@ -224,9 +224,9 @@ def simulate(samples, features=2, data_="blobs", architecture=[2, 2, 1]):
         if len(lbd) == 2:
             plt.figure()
             plt.scatter(lbd.T[:, 0], lbd.T[:, 1], c=y.T.reshape(-1), cmap=plt.cm.coolwarm, alpha=0.55)
-            plt.xlabel(r'$x_1$ coordinate', fontdict = {'fontsize' : 12})
-            plt.ylabel(r'$x_2$ coordinate', fontdict = {'fontsize' : 12})
-            plt.title(r'Transformed data: $\Lambda_{} = A^{} x + b^{}$'.format(i, i, i), fontdict = {'fontsize' : 18})
+            plt.xlabel(r'$1$st coordinate', fontdict = {'fontsize' : 12})
+            plt.ylabel(r'$2$nd coordinate', fontdict = {'fontsize' : 12})
+            plt.title(r'Linear transformation #{}: $\Lambda_{}z^{} = A^{} z^{} + b^{}$'.format(i+1, i+1, i, i, i, i), fontdict = {'fontsize' : 18})
         else:
             red_ = list()
             blue_ = list()
@@ -236,16 +236,13 @@ def simulate(samples, features=2, data_="blobs", architecture=[2, 2, 1]):
                 else:
                     blue_.append(ix)
             plt.figure()
-            plt.plot(blue_, len(blue_)*[0], 'o', c='r')
+            plt.plot(blue_, len(blue_)*[0], 'o', c='r', alpha=0.55)
         
-            plt.plot(red_, len(red_)*[0], 'o', c='b')
-            plt.xlabel(r'$x_1$ coordinate', fontdict = {'fontsize' : 12})
-            plt.ylabel(r'$x_2$ coordinate', fontdict = {'fontsize' : 12})
-            plt.title(r'Transformed data: $\Lambda_{} = A^{} x + b^{}$'.format(i, i, i), fontdict = {'fontsize' : 18})
+            plt.plot(red_, len(red_)*[0], 'o', c='b', alpha=0.55)
+            plt.xlabel(r'$1$st coordinate', fontdict = {'fontsize' : 12})
+            plt.ylabel(r'$2$nd coordinate', fontdict = {'fontsize' : 12})
+            plt.title(r'Projection onto ℝ: $\Lambda_{}z^{} = A^{} z^{} + b^{}$'.format(i+1, i, i, i, i), fontdict = {'fontsize' : 18})
         
-    
-    
-    print(weights[0])
     for j, sig in enumerate(layers):
         if j==0:
             # Don't want to show input layer as we already plot it
@@ -254,8 +251,8 @@ def simulate(samples, features=2, data_="blobs", architecture=[2, 2, 1]):
             if len(sig) == 2:
                 plt.figure()
                 plt.scatter(sig.T[:, 0], sig.T[:, 1], c=y.T.reshape(-1), cmap=plt.cm.coolwarm, alpha=0.55)
-                plt.xlabel(r'$x_1$ coordinate', fontdict = {'fontsize' : 12})
-                plt.ylabel(r'$x_2$ coordinate', fontdict = {'fontsize' : 12})
+                plt.xlabel(r'$z^{}_1$ coordinate'.format(j), fontdict = {'fontsize' : 12})
+                plt.ylabel(r'$z^{}_2$ coordinate'.format(j), fontdict = {'fontsize' : 12})
                 plt.title(r'{}st hidden layer: $z^{} = \sigma(A^{} z^{} + b^{})$'.format(j, j, j-1, j-1, j-1), 
                       fontdict = {'fontsize' : 18})
             else:
@@ -267,13 +264,13 @@ def simulate(samples, features=2, data_="blobs", architecture=[2, 2, 1]):
                     else:
                         _blue.append(ix)
                 plt.figure()
-                plt.plot(_blue, len(_blue)*[0], 'o', c='r')
+                plt.yticks(color='w')
+                plt.plot(_blue, len(_blue)*[0], 'o', c='r', alpha=0.55)
         
-                plt.plot(_red, len(_red)*[0], 'o', c='b')
-                plt.xlabel(r'$x_1$ coordinate', fontdict = {'fontsize' : 12})
-                plt.ylabel(r'$x_2$ coordinate', fontdict = {'fontsize' : 12})
+                plt.plot(_red, len(_red)*[0], 'o', c='b', alpha=0.55)
+                plt.xlabel(r'$z^{} \in$ ℝ coordinate'.format(j), fontdict = {'fontsize' : 12})
                 if j == len(layers)-1:
-                    plt.title(r'Output of neural network: $z^{} = \sigma(A^{} z^{} + b^{})$'.format(j, j, j-1, j-1, j-1), 
+                    plt.title(r'Output of neural network: $z^{} = \sigma(A^{} z^{} + b^{}) \in$ ℝ'.format(j, j-1, j-1, j-1, j-1), 
                               fontdict = {'fontsize' : 18})
                 else:
                     plt.title(r'{}st hidden layer: $z^{} = \sigma(A^{} z^{} + b^{})$'.format(j, j, j-1, j-1, j-1), 
@@ -282,7 +279,7 @@ def simulate(samples, features=2, data_="blobs", architecture=[2, 2, 1]):
 
 if __name__ == "__main__":
     #simulate(150, data_='blobs')
-    simulate(150, features=1, data_='blobs', architecture=[1, 2, 1])
+    simulate(25, features=1, data_='blobs', architecture=[1, 2, 1])
     
 #    # Just plot the activation functions 
 #    x1 = np.linspace(-10, 10, 200)
@@ -311,39 +308,5 @@ if __name__ == "__main__":
 #        plt.xlabel(r'x')
 #        plt.ylabel(r'$\sigma(x)$')
 #        plt.legend(loc=2, prop={'size': 14.5})
-    
-#    # Some plotting tests in 1d
-#    data = datasets.make_blobs(n_samples=50, n_features=1, centers=3, random_state=2)
-#
-#    X = data[0].T
-#    y = np.expand_dims(data[1], 1).T
-#    
-#    red = list()
-#    blue = list()
-#   
-#    for i, x in enumerate(X[0]):
-#        if y[0][i] == 0:
-#            red.append(x)
-#        else:
-#            blue.append(x)
-#            
-#    plt.plot(blue, len(blue)*[0], 'x')
-#    
-#    plt.plot(red, len(red)*[0], 'r+')
-#    plt.show()
-#    
-#    fig = plt.figure()
-#    ax = fig.gca(projection='3d')
-#
-#    # Prepare arrays x, y, z
-#    x = np.linspace(-10, 10, 100)
-#    x1 = nn.sigmoid(x)
-#    x2 = nn.sigmoid(x)
-#    
-#    #plt.plot(x1, x2)
-#    ax.plot(x1, x2, x, label='the parametric curve')
-#    ax.legend()
-#
-#    plt.show()
     
     
