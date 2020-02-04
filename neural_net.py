@@ -286,12 +286,12 @@ class NeuralNetwork(object):
             z0 = X.T
             for i, ix in enumerate(z0[0]):
                 if y.T[0][i] == 0:
-                    red.append(ix)
-                else:
                     blue.append(ix)
+                else:
+                    red.append(ix)
                 
-            plt.plot(blue, len(blue)*[0], 'o', c='r', alpha=0.55)
-            plt.plot(red, len(red)*[0], 'o', c='b', alpha=0.55)
+            plt.plot(red, len(red)*[0], 'o', c='r', alpha=0.55)
+            plt.plot(blue, len(blue)*[0], 'o', c='b', alpha=0.55)
     
             plt.plot(xx[Z>0], [0]*(Z[Z>0]), c= 'r', linewidth=5, alpha=0.35, label='red region')
             plt.plot(xx[Z==0], [0]*(Z[Z==0]+np.ones(len(Z[Z==0]))), c='b', linewidth=5, alpha=0.35, label='blue region')
@@ -431,7 +431,7 @@ class NeuralNetwork(object):
                                     np.round(np.mean(train_accuracies), 4), 
                                     np.round(np.mean(test_accuracies), 4), 
                                     )
-
+       
         history = {'epochs': epochs,
                    'train_loss': history_train_losses, 
                    'train_acc': history_train_accuracies,
@@ -465,3 +465,9 @@ class NeuralNetwork(object):
         # as it's a float in [0, 1]; we cut it to obtain the final result.
         predictions = (a > 0.5).astype(int)
         return predictions
+    
+    def Lambda(self, k, x):
+        '''
+        /!\ To fill /!\
+        '''
+        return np.dot(self.weights[k-1], x) + self.biases[k-1]
