@@ -12,7 +12,7 @@ __version__ = "0.2"
 from matplotlib import pyplot as plt
 from matplotlib import rc
 rc("text", usetex = True)
-font = {'size' : 20}
+font = {'size' : 30}
 rc('font', **font)
 matplotlib.rcParams['text.latex.preamble']=[r"\usepackage{amsmath}"]
 from mpl_toolkits.mplot3d import Axes3D
@@ -27,6 +27,7 @@ import seaborn as sns
 from pathlib import Path
 #sns.set(style="darkgrid")
 sns.set(style="whitegrid")
+
 
 # Colormap options: plt.cm.jet, plt.cm.coolwarm, plt.cm.viridis
 
@@ -105,7 +106,7 @@ def simulate(samples, features=2, data_="blobs", architecture=[2, 2, 1]):
     datasets_ = {'blobs': datasets.make_blobs(n_samples=samples, n_features=features, centers=2, cluster_std=1, random_state=2), 
                  'spirals': datasets.make_moons(n_samples=samples, noise=0.2),
                  'chess': generate_points(samples, [(0, 0), (0, 1), (1, 0), (1, 1)], [0, 1, 1, 0], 0.005),
-                 'q_random': generate_points_1d(nb=samples, centers=[-1, 0, 1], labels=[1, 0, 1])}
+                 'q_random': generate_points_1d(nb=samples, centers=[-1, 0, 1, 2], labels=[1, 0, 1, 0])}
     data = datasets_[data_]
     
     if data_ == "chess" or data_ == "q_random":
@@ -115,9 +116,9 @@ def simulate(samples, features=2, data_="blobs", architecture=[2, 2, 1]):
         y = np.expand_dims(data[1], 1).T   
         
     network = nn.NeuralNetwork(architecture, seed=0)
-    history = network.train(X=X, y=y, batch_size=4, epochs=5000, learning_rate=0.3, 
+    history = network.train(X=X, y=y, batch_size=4, epochs=20000, learning_rate=0.3, 
                                print_every=1000, validation_split=0.2, tqdm_=False,
-                               plot_every=2500)
+                               plot_every=20000)
     
     weights, biases = history['weights'], history['biases']
      
@@ -146,22 +147,22 @@ def simulate(samples, features=2, data_="blobs", architecture=[2, 2, 1]):
         plt.figure()
         plt.plot(red, len(red)*[0], 'o', c='r', alpha=0.55)
         plt.plot(blue, len(blue)*[0], 'o', c='b', alpha=0.55)
-        plt.xlabel(r'$x$ coordinate', fontdict = {'fontsize' : 13.5})
-        plt.yticks(color='w')
-        plt.title(r'The N={} data points'.format(samples), fontdict = {'fontsize' : 19.5})
+        plt.xlabel(r'$x$ coordinate', fontdict = {'fontsize' : 16})
+        #plt.yticks(color='w')
+        plt.title(r'The N={} data points'.format(samples), fontdict = {'fontsize' : 24})
         
     elif np.shape(z0)[0] == 2:
         plt.figure()
         plt.scatter(z0.T[:, 0], z0.T[:, 1], c=y.T.reshape(-1), cmap = plt.cm.coolwarm, alpha=0.55)
-        plt.xlabel(r'$x_1$ coordinate', fontdict = {'fontsize' : 13.5})
-        plt.ylabel(r'$x_2$ coordinate', fontdict = {'fontsize' : 13.5})
-        plt.title(r'The N={} data points'.format(samples), fontdict = {'fontsize' : 19.5})
+        plt.xlabel(r'$x_1$ coordinate', fontdict = {'fontsize' : 16})
+        plt.ylabel(r'$x_2$ coordinate', fontdict = {'fontsize' : 16})
+        plt.title(r'The N={} data points'.format(samples), fontdict = {'fontsize' : 24})
     else:
         raise TypeError 
         
     # /!\ Faut que je repare ça /!\
     Path('figures/visual_trans/{}/{}/{}d'.format(data_, samples, architecture[1])).mkdir(parents=True, exist_ok=True)
-    plt.savefig('figures/visual_trans/{}/{}/{}d/0.png'.format(data_, samples, architecture[1]), dpi=100)
+    plt.savefig('figures/visual_trans/{}/{}/{}d/0.png'.format(data_, samples, architecture[1]), dpi=200)
     
     # We are now in a position to store the information from every transition.
     # We store the linear transformations (\Lambda_1 z^0, \Lambda_2 z^1 etc.) 
@@ -235,14 +236,14 @@ def simulate(samples, features=2, data_="blobs", architecture=[2, 2, 1]):
         if len(lbd) == 2:
             plt.figure()    
             plt.scatter(lbd.T[:, 0], lbd.T[:, 1], c=y.T.reshape(-1), cmap=plt.cm.coolwarm, alpha=0.55)
-            plt.xlabel(r'$1$st coordinate', fontdict = {'fontsize' : 13.5})
-            plt.ylabel(r'$2$nd coordinate', fontdict = {'fontsize' : 13.5})
+            plt.xlabel(r'$1$st coordinate', fontdict = {'fontsize' : 16})
+            plt.ylabel(r'$2$nd coordinate', fontdict = {'fontsize' : 16})
         elif len(lbd) == 3:
             fig = plt.figure()
             ax = Axes3D(fig)
             ax.scatter(lbd.T[:, 0], lbd.T[:, 1], lbd.T[:, 2], c=y.T.reshape(-1), cmap=plt.cm.coolwarm, alpha=0.55)
-            plt.xlabel(r'$1$st coordinate', fontdict = {'fontsize' : 13.5})
-            plt.ylabel(r'$2$nd coordinate', fontdict = {'fontsize' : 13.5})
+            plt.xlabel(r'$1$st coordinate', fontdict = {'fontsize' : 16})
+            plt.ylabel(r'$2$nd coordinate', fontdict = {'fontsize' : 16})
         else: 
             red = list()
             blue = list()
@@ -255,10 +256,10 @@ def simulate(samples, features=2, data_="blobs", architecture=[2, 2, 1]):
             plt.figure()
             plt.plot(red, len(red)*[0], 'o', c='r', alpha=0.55)
             plt.plot(blue, len(blue)*[0], 'o', c='b', alpha=0.55)
-            plt.xlabel(r'$1$st coordinate', fontdict = {'fontsize' : 13.5})
-            plt.yticks(color='w')
-        plt.title(r'Linear transformation nb.{}: $\Lambda_{}z^{} = A^{} z^{} + b^{}$'.format(i+1, i+1, i, i, i, i), fontdict = {'fontsize' : 19.5})
-        plt.savefig('figures/visual_trans/{}/{}/{}d/{}.png'.format(data_, samples, architecture[1], 2*i+1), dpi=100)
+            plt.xlabel(r'$1$st coordinate', fontdict = {'fontsize' : 16})
+            #plt.yticks(color='w')
+        plt.title(r'Linear transformation nb.{}: $\Lambda_{}z^{} = A^{} z^{} + b^{}$'.format(i+1, i+1, i, i, i, i), fontdict = {'fontsize' : 24})
+        plt.savefig('figures/visual_trans/{}/{}/{}d/{}.png'.format(data_, samples, architecture[1], 2*i+1), dpi=200)
     
     for i, sig in enumerate(layers):
         if i==0:
@@ -267,18 +268,18 @@ def simulate(samples, features=2, data_="blobs", architecture=[2, 2, 1]):
             if len(sig) == 2:
                 plt.figure()
                 plt.scatter(sig.T[:, 0], sig.T[:, 1], c=y.T.reshape(-1), cmap=plt.cm.coolwarm, alpha=0.55)
-                plt.xlabel(r'$z^{}_1$ coordinate'.format(i), fontdict = {'fontsize' : 13.5})
-                plt.ylabel(r'$z^{}_2$ coordinate'.format(i), fontdict = {'fontsize' : 13.5})
-                plt.title(r'Hidden layer nb. {}: $z^{} = \sigma(A^{} z^{} + b^{})$'.format(i, i, i-1, i-1, i-1), 
-                      fontdict = {'fontsize' : 19.5})
+                plt.xlabel(r'$z^{}_1$ coordinate'.format(i), fontdict = {'fontsize' : 16})
+                plt.ylabel(r'$z^{}_2$ coordinate'.format(i), fontdict = {'fontsize' : 16})
+                plt.title(r'Hidden layer nb.{}: $z^{} = \sigma(A^{} z^{} + b^{})$'.format(i, i, i-1, i-1, i-1), 
+                      fontdict = {'fontsize' : 24})
             elif len(sig) == 3:
                 fig = plt.figure()
                 ax = Axes3D(fig)
                 ax.scatter(sig.T[:, 0], sig.T[:, 1], sig.T[:, 2], c=y.T.reshape(-1), cmap=plt.cm.coolwarm, alpha=0.55)
-                plt.xlabel(r'$z^{}_1$ coordinate'.format(i), fontdict = {'fontsize' : 13.5})
-                plt.ylabel(r'$z^{}_2$ coordinate'.format(i), fontdict = {'fontsize' : 13.5})
+                plt.xlabel(r'$z^{}_1$ coordinate'.format(i), fontdict = {'fontsize' : 16})
+                plt.ylabel(r'$z^{}_2$ coordinate'.format(i), fontdict = {'fontsize' : 16})
                 plt.title(r'Hidden layer nb.{}: $z^{} = \sigma(A^{} z^{} + b^{})$'.format(i, i, i-1, i-1, i-1), 
-                      fontdict = {'fontsize' : 19.5})
+                      fontdict = {'fontsize' : 24})
             else:
                 red = list()
                 blue = list()
@@ -289,25 +290,44 @@ def simulate(samples, features=2, data_="blobs", architecture=[2, 2, 1]):
                     else:
                         red.append(e)
                 plt.figure()
-                plt.yticks(color='w')
+                #plt.yticks(color='w')
         
                 plt.plot(blue, len(blue)*[0], 'o', c='b', alpha=0.55)
                 plt.plot(red, len(red)*[0], 'o', c='r', alpha=0.55)
-                plt.xlabel(r'$z^{}$ coordinate'.format(i), fontdict = {'fontsize' : 12})
-                plt.yticks(color='w')
+                plt.xlabel(r'$z^{}$ coordinate'.format(i), fontdict = {'fontsize' : 16})
+                #plt.yticks(color='w')
                 if i == len(layers)-1:
                     plt.title(r'Output of network: $z^{} = \sigma(A^{} z^{} + b^{}) \in [0, 1]$'.format(i, i-1, i-1, i-1, i-1), 
-                              fontdict = {'fontsize' : 19.5})
+                              fontdict = {'fontsize' : 24})
                 else:
                     plt.title(r'Hidden layer nb.{}: $z^{} = \sigma(A^{} z^{} + b^{}) \in [0, 1]^{{}}$'.format(i, i, i-1, i-1, i-1, architecture[i]), 
-                              fontdict = {'fontsize' : 19.5})  
-            plt.savefig('figures/visual_trans/{}/{}/{}d/{}.png'.format(data_, samples, architecture[1], 2*i), dpi=100)
+                              fontdict = {'fontsize' : 24})  
+            plt.savefig('figures/visual_trans/{}/{}/{}d/{}.png'.format(data_, samples, architecture[1], 2*i), dpi=200)
     
+                
+    #### We generate a 2d grid
+#    x_list = np.arange(-0.1, 1.1, 0.01)
+#    y_list = np.arange(-0.1, 1.1, 0.01)
+#    xx, yy = np.meshgrid(x_list, y_list)
+#    
+#    f1 = lambda x, y: nn.sigmoid(network.Lambda(2, np.array([[x], [y]])  ))[0,0]
+#    
+#    ligne = np.array( [ [(x, y) for x in x_list if f1(x, y) == 0.5  ] for y in y_list] )
+#
+#    res = np.array([ [f1(x, y) for x in x_list] for y in y_list] )
+#
+#    plt.figure()
+#    plt.scatter(layers[1].T[:, 0], layers[1].T[:, 1], c=y.T.reshape(-1), cmap=plt.cm.coolwarm, alpha=0.55)
+#    plt.contourf(xx, yy, res, cmap = plt.cm.coolwarm, alpha=0.35)
+#    plt.xlabel(r'$x_1$', fontdict = {'fontsize': 16})
+#    plt.ylabel(r'$x_2$', fontdict = {'fontsize': 16})
+#    plt.title(r'Contour plot of $x \mapsto \sigma(A^1 x + b^1)$', fontdict = {'fontsize': 24})
+#    plt.savefig('figures/visual_trans/{}/{}/{}d/{}.png'.format(data_, samples, architecture[1], '2-5'), dpi=200)
 
 if __name__ == "__main__":
     #simulate(8, data_='blobs')
     #simulate(25, features=1, data_='blobs', architecture=[1, 2, 1])
-    simulate(12, features=1, data_='q_random', architecture=[1, 2, 1])
+    simulate(16, features=1, data_='q_random', architecture=[1, 3, 1])
     
     
 #    # Just plot the activation functions 

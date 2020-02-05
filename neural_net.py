@@ -261,10 +261,9 @@ class NeuralNetwork(object):
             plt.ylim(yy.min(), yy.max())
             # We superpose the data points
             plt.scatter(X[:, 0], X[:, 1], c=y.reshape(-1), cmap = plt.cm.coolwarm, alpha=0.55)
-            message = r'Truncated output of $\sigma(A^L z^L+b^L)$ at iteration: {} '.format(iteration+1)
-            plt.xlabel(r'$x_1$ coordinate', fontdict = {'fontsize' : 12})
-            plt.ylabel(r'$x_2$ coordinate', fontdict = {'fontsize' : 12})
-            plt.title(message, fontdict = {'fontsize' : 18})
+            plt.xlabel(r'$x_1$ coordinate', fontdict = {'fontsize' : 13.5})
+            plt.ylabel(r'$x_2$ coordinate', fontdict = {'fontsize' : 13.5})
+            plt.title(r'The level sets of $F(x) = \chi_{  \{f_L(\Theta, \cdot)>0.5\} }(x)$', fontdict = {'fontsize' : 22})
         
         else:
             # Will add comments. /!\
@@ -293,20 +292,19 @@ class NeuralNetwork(object):
             plt.plot(red, len(red)*[0], 'o', c='r', alpha=0.55)
             plt.plot(blue, len(blue)*[0], 'o', c='b', alpha=0.55)
     
-            plt.plot(xx[Z>0], [0]*(Z[Z>0]), c= 'r', linewidth=5, alpha=0.35, label='red region')
-            plt.plot(xx[Z==0], [0]*(Z[Z==0]+np.ones(len(Z[Z==0]))), c='b', linewidth=5, alpha=0.35, label='blue region')
-            message = r'Truncated output of $\sigma(A^L z^L+b^L)$ at iteration: {} '.format(iteration+1)
-            plt.xlabel(r'$x$ coordinate', fontdict = {'fontsize' : 12})
-            plt.title(message, fontdict = {'fontsize' : 18})
-            plt.yticks(color='w')
-            plt.legend(loc=2, prop={'size': 14.5})
+            plt.plot(xx[Z>0], [0.2]*(Z[Z>0]), c= 'r', linewidth=5, alpha=0.75, label=r'$\{f_L(\Theta, \cdot)>0.5\}$')
+            plt.plot(xx[Z==0], [0.2]*(Z[Z==0]+np.ones(len(Z[Z==0]))), c='b', linewidth=5, alpha=0.75, label=r'$\{f_L(\Theta, \cdot)\leq 0.5\}$')
+            plt.xlabel(r'$x$ coordinate', fontdict = {'fontsize' : 16})
+            plt.title(r'The level sets of $F(x) = \chi_{  \{f_L(\Theta, \cdot)>0.5\} }(x)$', fontdict = {'fontsize' : 24})
+            #plt.yticks(color='w')
+            plt.legend(loc=2, prop={'size': 20})
             
             plt.figure()
-            plt.plot(xx, Z, linewidth=5, color='orange', alpha=0.45, label=r'Solution')
-            plt.title(r'Final solution: $x \mapsto f(x)$', fontdict = {'fontsize' : 18})
-            plt.xlabel(r'$x$ coordinate', fontdict = {'fontsize' : 12})
+            plt.plot(xx, Z, linewidth=5, color='green', alpha=0.45, label=r'$x \mapsto F(x) = \chi_{  \{f_L(\Theta, \cdot)>0.5\}  }(x)$')
+            plt.title(r'Final result; Iterations = {}'.format(iteration+1), fontdict = {'fontsize' : 24})
+            plt.xlabel(r'$x$ coordinate', fontdict = {'fontsize' : 16})
             plt.xlim(xx.min(), xx.max())
-            plt.legend(loc=2, prop={'size': 14.5})
+            plt.legend(loc='lower right', prop={'size': 20})
     
         # Fix this /!\
         #plt.savefig('figures/fig_%s.png' % iteration, dpi=450)                                                                                                  val_acc)
