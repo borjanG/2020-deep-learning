@@ -90,7 +90,7 @@ def generate_points(n, centers, labels, amplitude):
     y = y.T
     return X, y 
 
-def simulate(samples, features=2, data_="blobs", architecture=[2, 2, 1]):
+def simulate(samples, X, y, features=2, data_="blobs", architecture=[2, 2, 1]):
     """
     """
     # Perhaps encode a forcing of an exception
@@ -101,22 +101,22 @@ def simulate(samples, features=2, data_="blobs", architecture=[2, 2, 1]):
     # Just to link the code variables with my mathematical notations:
     # Lplus2 = len(architecture)
     
-    datasets_ = {'blobs': datasets.make_blobs(n_samples=samples, n_features=features, centers=2, cluster_std=1, random_state=2), 
-                 'spirals': datasets.make_moons(n_samples=samples, noise=0.2),
-                 'chess': generate_points(samples, [(0, 0), (0, 1), (1, 0), (1, 1)], [0, 1, 1, 0], 0.005),
-                 'q_random': generate_points_1d(nb=samples, centers=[-1, 0, 1], labels=[1, 0, 1])}
-    data = datasets_[data_]
-    
-    if data_ == "chess" or data_ == "q_random":
-        X, y = data
-    else:
-        X = data[0].T
-        y = np.expand_dims(data[1], 1).T   
+#    datasets_ = {'blobs': datasets.make_blobs(n_samples=samples, n_features=features, centers=2, cluster_std=1, random_state=2), 
+#                 'spirals': datasets.make_moons(n_samples=samples, noise=0.2),
+#                 'chess': generate_points(samples, [(0, 0), (0, 1), (1, 0), (1, 1)], [0, 1, 1, 0], 0.005),
+#                 'q_random': generate_points_1d(nb=samples, centers=[-1, 0, 1], labels=[1, 0, 1])}
+#    data = datasets_[data_]
+#    
+#    if data_ == "chess" or data_ == "q_random":
+#        X, y = data
+#    else:
+#        X = data[0].T
+#        y = np.expand_dims(data[1], 1).T   
         
     network = nn.NeuralNetwork(architecture, seed=0)
-    history = network.train(X=X, y=y, batch_size=4, epochs=5000, learning_rate=0.3, 
+    history = network.train(X=X, y=y, batch_size=4, epochs=20000, learning_rate=0.3, 
                                print_every=1000, validation_split=0.2, tqdm_=False,
-                               plot_every=5000)
+                               plot_every=20000)
     
     weights, biases = history['weights'], history['biases']
      
@@ -277,6 +277,9 @@ def simulate(samples, features=2, data_="blobs", architecture=[2, 2, 1]):
             major_ticks_z = np.linspace(z_min, z_max, 11)
             minor_ticks_z = np.linspace(z_min, z_max, 21)
             
+            fig = plt.figure()
+            ax = Axes3D(fig)
+            
             ax.set_xticks(major_ticks_x)
             ax.set_xticks(minor_ticks_x, minor=True)
             ax.set_yticks(major_ticks_y)
@@ -284,12 +287,14 @@ def simulate(samples, features=2, data_="blobs", architecture=[2, 2, 1]):
             ax.set_zticks(major_ticks_z)
             ax.set_zticks(minor_ticks_z, minor=True)
             
-            fig = plt.figure()
-            ax = Axes3D(fig)
+            
             ax.grid(which='minor', alpha=0.35)
             ax.grid(which='major', alpha=1)
             
             ax.scatter(lbd.T[:, 0], lbd.T[:, 1], lbd.T[:, 2], c=y.T.reshape(-1), cmap=plt.cm.coolwarm, alpha=0.55)
+            plt.xlim(x_min, x_max)
+            plt.ylim(y_min, y_max)
+            
             #plt.xlabel(r'$1$st coordinate', fontdict = {'fontsize' : 16})
             #plt.ylabel(r'$2$nd coordinate', fontdict = {'fontsize' : 16})
         else: 
@@ -301,7 +306,7 @@ def simulate(samples, features=2, data_="blobs", architecture=[2, 2, 1]):
                     blue.append(e)
                 else:
                     red.append(e)
-            x_min, x_max = min(blue+red)-0.1, max(blue+red)+0.1
+            x_min, x_max = min(blue+red)-0.15, max(blue+red)+0.15
             
             major_ticks_x = np.linspace(x_min, x_max, 11)
             minor_ticks_x = np.linspace(x_min, x_max, 21)
@@ -350,8 +355,8 @@ def simulate(samples, features=2, data_="blobs", architecture=[2, 2, 1]):
                 # Or if you want different settings for the grids:
                 ax.grid(which='minor', alpha=0.35)
                 ax.grid(which='major', alpha=1)
-                plt.xlim(0.0, 1.05)
-                plt.ylim(0.0, 1.0)
+                plt.xlim(-0.05, 1.05)
+                plt.ylim(-0.05, 1.0)
                 
                 plt.scatter(sig.T[:, 0], sig.T[:, 1], c=y.T.reshape(-1), cmap=plt.cm.coolwarm, alpha=0.55)
                 plt.xlabel(r'$z^{}_1$ coordinate'.format(i), fontdict = {'fontsize' : 16})
@@ -362,8 +367,8 @@ def simulate(samples, features=2, data_="blobs", architecture=[2, 2, 1]):
                 fig = plt.figure()
                 ax = Axes3D(fig)
                 
-                major_ticks = np.arange(0.0, 1.01, 0.1)
-                minor_ticks = np.arange(0.0, 1.01, 0.05)
+                major_ticks = np.arange(-0.1, 1.1, 0.1)
+                minor_ticks = np.arange(-0.1, 1.1, 0.05)
         
                 ax.set_xticks(major_ticks)
                 ax.set_xticks(minor_ticks, minor=True)
@@ -376,9 +381,12 @@ def simulate(samples, features=2, data_="blobs", architecture=[2, 2, 1]):
                 ax.grid(which='minor', alpha=0.35)
                 ax.grid(which='major', alpha=1)
                 
+                
                 ax.scatter(sig.T[:, 0], sig.T[:, 1], sig.T[:, 2], c=y.T.reshape(-1), cmap=plt.cm.coolwarm, alpha=0.55)
                 plt.xlabel(r'$z^{}_1$ coordinate'.format(i), fontdict = {'fontsize' : 16})
                 plt.ylabel(r'$z^{}_2$ coordinate'.format(i), fontdict = {'fontsize' : 16})
+                plt.xlim(-0.05, 1.05)
+                plt.ylim(-0.05, 1.0)
                 plt.title(r'Hidden layer nb.{}: $z^{} = \sigma(A^{} z^{} + b^{})$'.format(i, i, i-1, i-1, i-1), 
                       fontdict = {'fontsize' : 24})
             else:
@@ -428,19 +436,19 @@ def simulate(samples, features=2, data_="blobs", architecture=[2, 2, 1]):
 
                 
     #### We generate a 2d grid
-    x_list = np.arange(-0.1, 1.1, 0.01)
-    y_list = np.arange(-0.1, 1.1, 0.01)
+    x_list = np.arange(-0.1, 1.1, 0.00125)
+    y_list = np.arange(-0.1, 1.1, 0.00125)
     
     if architecture[1] == 2:
         xx, yy = np.meshgrid(x_list, y_list)
         
         f1 = lambda x, y: nn.sigmoid(network.Lambda(2, np.array([[x], [y]])  ))[0,0]
         res = np.array([ [f1(x, y) for x in x_list] for y in y_list] )
-    
+
         major_ticks = np.arange(-0.1, 1.1, 0.1)
         minor_ticks = np.arange(-0.1, 1.1, 0.05)
         
-        fig = plt.figure()
+        fig = plt.figure(figsize=(12, 10))
         ax = fig.add_subplot(1, 1, 1)
         ax.set_xticks(major_ticks)
         ax.set_xticks(minor_ticks, minor=True)
@@ -452,9 +460,10 @@ def simulate(samples, features=2, data_="blobs", architecture=[2, 2, 1]):
         ax.grid(which='major', alpha=1)
     
         plt.scatter(layers[1].T[:, 0], layers[1].T[:, 1], c=y.T.reshape(-1), cmap=plt.cm.coolwarm, alpha=0.55)
-        plt.contourf(xx, yy, res, cmap = plt.cm.coolwarm, alpha=0.35)
-        plt.colorbar()
-        droite = plt.contour(xx, yy, res, levels=[0.5], c = 'b', linewidth = 2.25, alpha=0.8)
+        plt.contourf(xx, yy, res, cmap = plt.cm.coolwarm, alpha=0.4)
+        cbar = plt.colorbar(plt.cm.ScalarMappable(cmap=plt.cm.coolwarm), alpha=0.4)
+        #cbar.set_clim(0, 1)
+        droite = plt.contour(xx, yy, res, levels=[0.5], c = 'b', linewidth = 2.25, alpha=0.75)
         plt.clabel(droite, inline=1, fontsize=16)
       
         droite.collections[0].set_label(r'Level line $\{ x \in [0, 1]^2 \colon \sigma(A^1 x + b^1) = 0.5  \}$')
@@ -467,30 +476,56 @@ def simulate(samples, features=2, data_="blobs", architecture=[2, 2, 1]):
         plt.savefig('figures/visual_trans/{}/{}/{}d/{}.svg'.format(data_, samples, architecture[1], '2-5'), format='svg')
     
     if architecture[1] == 3:
-        # It doesn't work
         
         a, b, c, d = weights[1][0][0], weights[1][0][1], weights[1][0][2], biases[1][0][0]
         X,Y = np.meshgrid(x_list,y_list)
         Z = (d - a*X - b*Y) / c
         
         fig = plt.figure()
-        ax = fig.gca(projection='3d')
-        surf = ax.plot_surface(X, Y, Z, color='gray', alpha=0.35)
+        ax = Axes3D(fig)
+                
+        major_ticks = np.arange(0.0, 1.01, 0.1)
+        minor_ticks = np.arange(0.0, 1.01, 0.05)
+        
+        ax.set_xticks(major_ticks)
+        ax.set_xticks(minor_ticks, minor=True)
+        ax.set_yticks(major_ticks)
+        ax.set_yticks(minor_ticks, minor=True)
+        ax.set_zticks(major_ticks)
+        ax.set_zticks(minor_ticks, minor=True)
+        
+        # Or if you want different settings for the grids:
+        ax.grid(which='minor', alpha=0.35)
+        ax.grid(which='major', alpha=1)
+        
+        #fig = plt.figure()
+        #ax = fig.gca(projection='3d')
+        surf = ax.plot_surface(X, Y, Z, color='gray', alpha=0.2, antialiased=True)
         ax.scatter(layers[1].T[:, 0], layers[1].T[:, 1], layers[1].T[:, 2], c=y.T.reshape(-1), cmap=plt.cm.coolwarm, alpha=0.55)
         
+        plt.xlim(-0.1, 1.1)
+        plt.ylim(-0.1, 1.1)
+        ax.set_zlim(-0.1, 1.1)
+        
         #for angle in range(0,360): 
-        ax.view_init(30, 60)
+        #ax.view_init(30, 60)
         
         plt.xlabel(r'$z^{}_1$ coordinate'.format(i), fontdict = {'fontsize' : 16})
         plt.ylabel(r'$z^{}_2$ coordinate'.format(i), fontdict = {'fontsize' : 16})
         plt.title(r'Hidden layer nb.{}: $z^{} = \sigma(A^{} z^{} + b^{})$'.format(i, i, i-1, i-1, i-1), 
                      fontdict = {'fontsize' : 24})
+        plt.savefig('figures/visual_trans/{}/{}/{}d/{}.svg'.format(data_, samples, architecture[1], '2-5'), format='svg')
         
     
 if __name__ == "__main__":
     #simulate(8, data_='blobs')
     #simulate(25, features=1, data_='blobs', architecture=[1, 2, 1])
-    simulate(12, features=1, data_='q_random', architecture=[1, 2, 1])
+    samples = 12
+    #X, y = generate_points_1d(nb=samples, centers=[-1, 0, 1], labels=[1, 0, 1])
+    X = np.array([[-0.08429253, -0.11161125, -0.16280399, -0.86931755,  0.26336258,  0.38847008,
+                   0.50250804,  0.84192296,  1.9465443,   1.51431575,  1.57453649,  1.97647123]])
+    y = np.array([[1, 1, 1, 1, 0, 0, 0, 0, 1, 1, 1, 1]])
+    simulate(12, X, y, features=1, data_='q_random', architecture=[1, 3, 1])
     
     
 ###    # Just plot the activation functions 
