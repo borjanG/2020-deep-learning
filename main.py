@@ -14,7 +14,6 @@ from matplotlib import rc
 rc("text", usetex = True)
 font = {'size' : 30}
 rc('font', **font)
-matplotlib.rcParams['text.latex.preamble']=[r"\usepackage{amsmath}"]
 from mpl_toolkits.mplot3d import Axes3D
 import math
 import random as rand
@@ -327,33 +326,64 @@ def simulate(samples, features=2, data_="blobs", architecture=[2, 2, 1]):
 if __name__ == "__main__":
     #simulate(8, data_='blobs')
     #simulate(25, features=1, data_='blobs', architecture=[1, 2, 1])
-    simulate(16, features=1, data_='q_random', architecture=[1, 3, 1])
+    #simulate(16, features=1, data_='q_random', architecture=[1, 3, 1])
     
     
 #    # Just plot the activation functions 
-#    x1 = np.linspace(-10, 10, 200)
-#    x2 = np.linspace(-3, 3, 100)
-#    y1 = list()
-#    y2 = list()
-#    for z in x1:
-#        y1.append(nn.sigmoid(z))
-#    for z in x2:
-#        y2.append(nn.relu(z))
-#    
-#    for i in range(2):    
-#        plt.figure()
-#        plt.grid(True)
-#        #plt.rc('grid', linestyle="-.", color='r')
-#        
-#        if i==0:
-#            plt.plot(x1, y1, color='blue', linewidth=3, alpha=0.55, linestyle='-', label=r'$\sigma(x) = (1+e^{-x})^{-1}$')
-#            plt.title(r'The sigmoid activation function', fontdict={'fontsize': 12})
-#            plt.xlim(-10, 10)
-#            plt.ylim(-0.01, 1.01)
-#        else:
-#            plt.plot(x2, y2, color='blue', linewidth=3, alpha=0.55, linestyle='-', label=r'$\sigma(x) = \max(x, 0)$')            
-#            plt.title(r'The ReLU activation function', fontdict={'fontsize': 12})
-#            plt.xlim(-3, 3)
-#        plt.xlabel(r'x')
-#        plt.ylabel(r'$\sigma(x)$')
-#        plt.legend(loc=2, prop={'size': 14.5})
+    x1 = np.linspace(-10, 10, 200)
+    x2 = np.linspace(-3, 3, 100)
+    y1 = list()
+    y2 = list()
+    for z in x1:
+        y1.append(nn.sigmoid(z))
+    for z in x2:
+        y2.append(nn.relu(z))
+    
+    for i in range(2):    
+        fig = plt.figure()
+        ax = fig.add_subplot(1, 1, 1)
+        
+        if i==0:
+            major_ticks_x = np.arange(-10, 10.15, 2.5)
+            minor_ticks_x = np.arange(-10, 10.15, 1.25)
+            major_ticks_y = np.arange(0, 1.15, 0.125)
+            minor_ticks_y = np.arange(0, 1.15, 0.0625)
+            ax.set_xticks(major_ticks_x)
+            ax.set_xticks(minor_ticks_x, minor=True)
+            ax.set_yticks(major_ticks_y)
+            ax.set_yticks(minor_ticks_y, minor=True)
+            
+            # And a corresponding grid
+            ax.grid(which='both')
+
+            # Or if you want different settings for the grids:
+            ax.grid(which='minor', alpha=0.25)
+            ax.grid(which='major', alpha=0.75)
+            ax.plot(x1, y1, color='purple', linewidth=3.75, alpha=0.35, linestyle='-', label=r'$\sigma(x) = (1+e^{-x})^{-1}$')
+            plt.title(r'The sigmoid activation function', fontdict={'fontsize': 20})
+            plt.xlim(-10, 10)
+            plt.ylim(-0.05, 1.05)
+        else:
+            major_ticks_x = np.arange(-3, 3.1, 1)
+            minor_ticks_x = np.arange(-3, 3.1, 0.5)
+            major_ticks_y = np.arange(0, 3.01, 0.5)
+            minor_ticks_y = np.arange(0, 3.01, 0.25)
+            ax.set_xticks(major_ticks_x)
+            ax.set_xticks(minor_ticks_x, minor=True)
+            ax.set_yticks(major_ticks_y)
+            ax.set_yticks(minor_ticks_y, minor=True)
+            
+            # And a corresponding grid
+            ax.grid(which='both')
+
+            # Or if you want different settings for the grids:
+            ax.grid(which='minor', alpha=0.25)
+            ax.grid(which='major', alpha=0.75)
+            plt.plot(x2, y2, color='purple', linewidth=3.75, alpha=0.35, linestyle='-', label=r'$\sigma(x) = \max(x, 0)$')            
+            plt.title(r'The ReLU activation function', fontdict={'fontsize': 20})
+            plt.xlim(-3, 3)
+        plt.xlabel(r'$x$', fontdict = {'fontsize': 16})
+        plt.ylabel(r'$\sigma(x)$', fontdict = {'fontsize': 16})
+        plt.legend(loc=2, prop={'size': 18})
+        
+        
