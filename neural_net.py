@@ -267,15 +267,13 @@ class NeuralNetwork(object):
         
         else:
             
-            x_min = X[:, 0].min() -0.5
-            x_max = X[:, 0].max() +0.5
+            x_min = X[:, 0].min() -0.1
+            x_max = X[:, 0].max() +0.1
             xx = np.arange(x_min, x_max, res)
             
             Z = self.predict(np.c_[xx.ravel()].T)
             Z = Z.reshape(xx.shape)
         
-            plt.xlim(xx.min(), xx.max())
-            
             # We superpose the data points
             red = list()
             blue = list()
@@ -288,29 +286,31 @@ class NeuralNetwork(object):
                 
             fig = plt.figure()
             ax = fig.add_subplot(1, 1, 1)
-            major_ticks_x = np.arange(x_min, x_max, 0.3)
-            minor_ticks_x = np.arange(x_min, x_max, 0.15)
-            major_ticks_y = np.arange(0.0, 1.01, 0.1)
-            minor_ticks_y = np.arange(0.0, 1.01, 0.05)
+            major_ticks_x = np.linspace(x_min, x_max, 11)
+            minor_ticks_x = np.linspace(x_min, x_max, 21)
+            major_ticks_y = np.linspace(0.0, 1.0, 11)
+            minor_ticks_y = np.linspace(0.0, 1.0, 21)
+            
             ax.set_xticks(major_ticks_x)
             ax.set_xticks(minor_ticks_x, minor=True)
             ax.set_yticks(major_ticks_y)
             ax.set_yticks(minor_ticks_y, minor=True)
             
-            # Or if you want different settings for the grids:
-            ax.grid(which='minor', alpha=0.25)
+            ax.grid(which='minor', alpha=0.35)
             ax.grid(which='major', alpha=1)
+            plt.xlim(xx.min(), xx.max())
+            plt.ylim(-0.1, 1.1)
                 
             plt.plot(red, len(red)*[0], 'o', c='r', alpha=0.55)
             plt.plot(blue, len(blue)*[0], 'o', c='b', alpha=0.55)
     
-            plt.plot(xx[Z>0], [0.8]*(Z[Z>0]), c= 'r', linewidth=5, alpha=0.75, label=r'$\{f_L(\Theta, \cdot)>0.5\}$')
-            plt.plot(xx[Z==0], [0.8]*(Z[Z==0]+np.ones(len(Z[Z==0]))), c='b', linewidth=5, alpha=0.75, label=r'$\{f_L(\Theta, \cdot)\leq 0.5\}$')
-            plt.xlabel(r'$x$ coordinate', fontdict = {'fontsize' : 16})
+            plt.plot(xx[Z>0], [0.65]*(Z[Z>0]), c= 'r', linewidth=5, alpha=0.35, label=r'$\{f_L(\Theta, \cdot)>0.5\}$')
+            plt.plot(xx[Z==0], [0.65]*(Z[Z==0]+np.ones(len(Z[Z==0]))), c='b', linewidth=5, alpha=0.35, label=r'$\{f_L(\Theta, \cdot)\leq 0.5\}$')
+            plt.xlabel(r'$x$', fontdict = {'fontsize' : 16})
             plt.title(r'The level sets of $F(x) = \chi_{  \{f_L(\Theta, \cdot)>0.5\} }(x)$', fontdict = {'fontsize' : 24})
-            #plt.yticks(color='w')
             plt.legend(loc='upper center', bbox_to_anchor=(0.5, -0.075),
                       fancybox=True, shadow=True, ncol=5, fontsize=18)
+            plt.savefig('figures/6.svg', format='svg')
             
             fig2 = plt.figure()
             ax2 = fig2.add_subplot(1, 1, 1)
@@ -323,13 +323,15 @@ class NeuralNetwork(object):
             ax2.grid(which='minor', alpha=0.25)
             ax2.grid(which='major', alpha=1)
             
-            plt.plot(xx, Z, linewidth=5, color='green', alpha=0.45, label=r'$F(x) = \chi_{  \{f_L(\Theta, \cdot)>0.5\}  }(x)$')
+            plt.plot(xx, Z, linewidth=4, color='green', alpha=0.45, label=r'$F(x) = \chi_{  \{f_L(\Theta, \cdot)>0.5\}  }(x)$')
             plt.title(r'Final result; Iterations = {}'.format(iteration+1), fontdict = {'fontsize' : 24})
             plt.xlabel(r'$x$', fontdict = {'fontsize' : 16})
             plt.xlim(xx.min(), xx.max())
+            plt.ylim(-0.1, 1.1)
+            
             plt.legend(loc='upper center', bbox_to_anchor=(0.5, -0.075),
                       fancybox=True, shadow=True, ncol=5, fontsize=18)
-    
+            plt.savefig('figures/5.svg', format='svg')
         # Fix this /!\
         #plt.savefig('figures/fig_%s.png' % iteration, dpi=450)                                                                                                  val_acc)
 

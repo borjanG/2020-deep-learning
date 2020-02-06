@@ -277,6 +277,13 @@ def simulate(samples, features=2, data_="blobs", architecture=[2, 2, 1]):
             major_ticks_z = np.linspace(z_min, z_max, 11)
             minor_ticks_z = np.linspace(z_min, z_max, 21)
             
+            ax.set_xticks(major_ticks_x)
+            ax.set_xticks(minor_ticks_x, minor=True)
+            ax.set_yticks(major_ticks_y)
+            ax.set_yticks(minor_ticks_y, minor=True)
+            ax.set_zticks(major_ticks_z)
+            ax.set_zticks(minor_ticks_z, minor=True)
+            
             fig = plt.figure()
             ax = Axes3D(fig)
             ax.grid(which='minor', alpha=0.35)
@@ -294,9 +301,32 @@ def simulate(samples, features=2, data_="blobs", architecture=[2, 2, 1]):
                     blue.append(e)
                 else:
                     red.append(e)
-            plt.figure()
-            plt.plot(red, len(red)*[0], 'o', c='r', alpha=0.55)
-            plt.plot(blue, len(blue)*[0], 'o', c='b', alpha=0.55)
+            x_min, x_max = min(blue+red)-0.1, max(blue+red)+0.1
+            
+            major_ticks_x = np.linspace(x_min, x_max, 11)
+            minor_ticks_x = np.linspace(x_min, x_max, 21)
+            major_ticks_y = np.linspace(-0.5, 0.5, 11)
+            minor_ticks_y = np.linspace(-0.5, 0.5, 21)
+        
+            fig = plt.figure()
+            ax = fig.add_subplot(1, 1, 1)
+            ax.set_xticks(major_ticks_x)
+            ax.set_xticks(minor_ticks_x, minor=True)
+            ax.set_yticks(major_ticks_y)
+            ax.set_yticks(minor_ticks_y, minor=True)
+        
+            # Or if you want different settings for the grids:
+            ax.grid(which='minor', alpha=0.35)
+            ax.grid(which='major', alpha=1)
+        
+            ax.plot(red, len(red)*[0.5], 'o', c='r', alpha=0.0)
+            ax.plot(red, len(red)*[-0.5], 'o', c='r', alpha=0.0)
+        
+            ax.plot(red, len(red)*[0], 'o', c='r', alpha=0.55)
+            ax.plot(blue, len(blue)*[0], 'o', c='b', alpha=0.55)
+            #plt.xlabel(r'$x$', fontdict = {'fontsize' : 16})
+            plt.xlim(x_min, x_max)
+            plt.ylim(-0.5, 0.5)
             
             #plt.xlabel(r'$1$st coordinate', fontdict = {'fontsize' : 16})
         plt.title(r'Linear transformation nb.{}: $\Lambda_{}z^{} = A^{} z^{} + b^{}$'.format(i+1, i+1, i, i, i, i), fontdict = {'fontsize' : 24})
@@ -423,6 +453,7 @@ def simulate(samples, features=2, data_="blobs", architecture=[2, 2, 1]):
     
         plt.scatter(layers[1].T[:, 0], layers[1].T[:, 1], c=y.T.reshape(-1), cmap=plt.cm.coolwarm, alpha=0.55)
         plt.contourf(xx, yy, res, cmap = plt.cm.coolwarm, alpha=0.35)
+        plt.colorbar()
         droite = plt.contour(xx, yy, res, levels=[0.5], c = 'b', linewidth = 2.25, alpha=0.8)
         plt.clabel(droite, inline=1, fontsize=16)
       
