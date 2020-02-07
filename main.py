@@ -114,9 +114,9 @@ def simulate(samples, X, y, features=2, data_="blobs", architecture=[2, 2, 1]):
 #        y = np.expand_dims(data[1], 1).T   
         
     network = nn.NeuralNetwork(architecture, seed=0)
-    history = network.train(X=X, y=y, batch_size=4, epochs=20000, learning_rate=0.3, 
+    history = network.train(X=X, y=y, batch_size=4, epochs=5000, learning_rate=0.3, 
                                print_every=1000, validation_split=0.2, tqdm_=False,
-                               plot_every=20000)
+                               plot_every=5000)
     
     weights, biases = history['weights'], history['biases']
      
@@ -436,8 +436,8 @@ def simulate(samples, X, y, features=2, data_="blobs", architecture=[2, 2, 1]):
 
                 
     #### We generate a 2d grid
-    x_list = np.arange(-0.1, 1.1, 0.00125)
-    y_list = np.arange(-0.1, 1.1, 0.00125)
+    x_list = np.arange(-0.1, 1.1, 0.01)
+    y_list = np.arange(-0.1, 1.1, 0.01)
     
     if architecture[1] == 2:
         xx, yy = np.meshgrid(x_list, y_list)
@@ -476,16 +476,18 @@ def simulate(samples, X, y, features=2, data_="blobs", architecture=[2, 2, 1]):
         plt.savefig('figures/visual_trans/{}/{}/{}d/{}.svg'.format(data_, samples, architecture[1], '2-5'), format='svg')
     
     if architecture[1] == 3:
+        x_list = np.arange(0.0, 1.0, 0.01)
+        y_list = np.arange(0.0, 1.0, 0.01)
         
         a, b, c, d = weights[1][0][0], weights[1][0][1], weights[1][0][2], biases[1][0][0]
         X,Y = np.meshgrid(x_list,y_list)
-        Z = (d - a*X - b*Y) / c
+        
         
         fig = plt.figure()
         ax = Axes3D(fig)
                 
-        major_ticks = np.arange(0.0, 1.01, 0.1)
-        minor_ticks = np.arange(0.0, 1.01, 0.05)
+        major_ticks = np.arange(0.0, 1.1, 0.2)
+        minor_ticks = np.arange(0.0, 1.1, 0.1)
         
         ax.set_xticks(major_ticks)
         ax.set_xticks(minor_ticks, minor=True)
@@ -500,15 +502,20 @@ def simulate(samples, X, y, features=2, data_="blobs", architecture=[2, 2, 1]):
         
         #fig = plt.figure()
         #ax = fig.gca(projection='3d')
-        surf = ax.plot_surface(X, Y, Z, color='gray', alpha=0.2, antialiased=True)
+        x_ = np.linspace(0, 1, 6)
+        y_ = np.linspace(0, 1, 6)
+        X_, Y_ = np.meshgrid(x_, y_)
+        Z = (d - a*X_ - b*Y_) / c
+        surf = ax.plot_surface(X_, Y_, Z, color = 'green', alpha=0.2, linewidth=1)
         ax.scatter(layers[1].T[:, 0], layers[1].T[:, 1], layers[1].T[:, 2], c=y.T.reshape(-1), cmap=plt.cm.coolwarm, alpha=0.55)
         
-        plt.xlim(-0.1, 1.1)
-        plt.ylim(-0.1, 1.1)
-        ax.set_zlim(-0.1, 1.1)
+        plt.xlim(0.0, 1.0)
+        plt.ylim(0.0, 1.0)
+        ax.set_zlim(0.0, 1.0)
         
-        #for angle in range(0,360): 
-        #ax.view_init(30, 60)
+        #for angle in range(0,360):
+        ax.view_init(elev=5, azim=-70)
+        #ax.view_init(30, 30)
         
         plt.xlabel(r'$z^{}_1$ coordinate'.format(i), fontdict = {'fontsize' : 16})
         plt.ylabel(r'$z^{}_2$ coordinate'.format(i), fontdict = {'fontsize' : 16})
