@@ -11,6 +11,7 @@ __version__ = "0.2"
 
 from matplotlib import pyplot as plt
 from matplotlib import rc
+from matplotlib import lines
 rc("text", usetex = True)
 font = {'size' : 30}
 rc('font', **font)
@@ -114,9 +115,9 @@ def simulate(samples, X, y, features=2, data_="blobs", architecture=[2, 2, 1]):
 #        y = np.expand_dims(data[1], 1).T   
         
     network = nn.NeuralNetwork(architecture, seed=0)
-    history = network.train(X=X, y=y, batch_size=4, epochs=5000, learning_rate=0.3, 
+    history = network.train(X=X, y=y, batch_size=4, epochs=20000, learning_rate=0.3, 
                                print_every=1000, validation_split=0.2, tqdm_=False,
-                               plot_every=5000)
+                               plot_every=20000)
     
     weights, biases = history['weights'], history['biases']
      
@@ -263,8 +264,9 @@ def simulate(samples, X, y, features=2, data_="blobs", architecture=[2, 2, 1]):
             plt.ylim(y_min, y_max)
             
             plt.scatter(lbd.T[:, 0], lbd.T[:, 1], c=y.T.reshape(-1), cmap=plt.cm.coolwarm, alpha=0.55)
-            #plt.xlabel(r'$1$st coordinate', fontdict = {'fontsize' : 16})
-            #plt.ylabel(r'$2$nd coordinate', fontdict = {'fontsize' : 16})
+            plt.xlabel(r'$(\Lambda_{}z^{})_{{1}}$ coordinate'.format(i+1, i), fontdict = {'fontsize' : 16})
+            plt.ylabel(r'$(\Lambda_{}z^{})_{{2}}$ coordinate'.format(i+1, i), fontdict = {'fontsize' : 16})
+        
         elif len(lbd) == 3:
             x_min, x_max = min(lbd[0,:])-0.1, max(lbd[0, :])+0.1
             y_min, y_max = min(lbd[1, :])-0.1, max(lbd[1, :])+0.1
@@ -274,27 +276,29 @@ def simulate(samples, X, y, features=2, data_="blobs", architecture=[2, 2, 1]):
             minor_ticks_x = np.linspace(x_min, x_max, 21)
             major_ticks_y = np.linspace(y_min, y_max, 11)
             minor_ticks_y = np.linspace(y_min, y_max, 21)
-            major_ticks_z = np.linspace(z_min, z_max, 11)
-            minor_ticks_z = np.linspace(z_min, z_max, 21)
+            #major_ticks_z = np.linspace(z_min, z_max, 6)
+            #minor_ticks_z = np.linspace(z_min, z_max, 12)
             
             fig = plt.figure()
             ax = Axes3D(fig)
             
-            ax.set_xticks(major_ticks_x)
-            ax.set_xticks(minor_ticks_x, minor=True)
-            ax.set_yticks(major_ticks_y)
-            ax.set_yticks(minor_ticks_y, minor=True)
-            ax.set_zticks(major_ticks_z)
-            ax.set_zticks(minor_ticks_z, minor=True)
+            #ax.set_xticks(major_ticks_x)
+            #ax.set_xticks(minor_ticks_x, minor=True)
+            #ax.set_yticks(major_ticks_y)
+            #ax.set_yticks(minor_ticks_y, minor=True)
+            #ax.set_zticks(major_ticks_z)
+            #ax.set_zticks(minor_ticks_z, minor=True)
             
             
-            ax.grid(which='minor', alpha=0.35)
-            ax.grid(which='major', alpha=1)
+            #ax.grid(which='minor', alpha=0.35)
+            #ax.grid(which='major', alpha=1)
             
             ax.scatter(lbd.T[:, 0], lbd.T[:, 1], lbd.T[:, 2], c=y.T.reshape(-1), cmap=plt.cm.coolwarm, alpha=0.55)
+            #ax.view_init(azim=-180)
             plt.xlim(x_min, x_max)
             plt.ylim(y_min, y_max)
-            
+            plt.xlabel(r'$(\Lambda_{}z^{})_{{1}}$ coordinate'.format(i+1, i), fontdict = {'fontsize' : 16})
+            plt.ylabel(r'$(\Lambda_{}z^{})_{{2}}$ coordinate'.format(i+1, i), fontdict = {'fontsize' : 16})
             #plt.xlabel(r'$1$st coordinate', fontdict = {'fontsize' : 16})
             #plt.ylabel(r'$2$nd coordinate', fontdict = {'fontsize' : 16})
         else: 
@@ -356,7 +360,7 @@ def simulate(samples, X, y, features=2, data_="blobs", architecture=[2, 2, 1]):
                 ax.grid(which='minor', alpha=0.35)
                 ax.grid(which='major', alpha=1)
                 plt.xlim(-0.05, 1.05)
-                plt.ylim(-0.05, 1.0)
+                plt.ylim(-0.05, 1.05)
                 
                 plt.scatter(sig.T[:, 0], sig.T[:, 1], c=y.T.reshape(-1), cmap=plt.cm.coolwarm, alpha=0.55)
                 plt.xlabel(r'$z^{}_1$ coordinate'.format(i), fontdict = {'fontsize' : 16})
@@ -367,19 +371,19 @@ def simulate(samples, X, y, features=2, data_="blobs", architecture=[2, 2, 1]):
                 fig = plt.figure()
                 ax = Axes3D(fig)
                 
-                major_ticks = np.arange(-0.1, 1.1, 0.1)
-                minor_ticks = np.arange(-0.1, 1.1, 0.05)
+                #major_ticks = np.arange(0.0, 1.1, 0.2)
+                #minor_ticks = np.arange(0.0, 1.1, 0.1)
         
-                ax.set_xticks(major_ticks)
-                ax.set_xticks(minor_ticks, minor=True)
-                ax.set_yticks(major_ticks)
-                ax.set_yticks(minor_ticks, minor=True)
-                ax.set_zticks(major_ticks)
-                ax.set_zticks(minor_ticks, minor=True)
+                #ax.set_xticks(major_ticks)
+                #ax.set_xticks(minor_ticks, minor=True)
+                #ax.set_yticks(major_ticks)
+                #ax.set_yticks(minor_ticks, minor=True)
+                #ax.set_zticks(major_ticks)
+                #ax.set_zticks(minor_ticks, minor=True)
         
                 # Or if you want different settings for the grids:
-                ax.grid(which='minor', alpha=0.35)
-                ax.grid(which='major', alpha=1)
+                #ax.grid(which='minor', alpha=0.35)
+                #ax.grid(which='major', alpha=1)
                 
                 
                 ax.scatter(sig.T[:, 0], sig.T[:, 1], sig.T[:, 2], c=y.T.reshape(-1), cmap=plt.cm.coolwarm, alpha=0.55)
@@ -387,6 +391,7 @@ def simulate(samples, X, y, features=2, data_="blobs", architecture=[2, 2, 1]):
                 plt.ylabel(r'$z^{}_2$ coordinate'.format(i), fontdict = {'fontsize' : 16})
                 plt.xlim(-0.05, 1.05)
                 plt.ylim(-0.05, 1.0)
+                ax.set_zlim(0.0, 1.0)
                 plt.title(r'Hidden layer nb.{}: $z^{} = \sigma(A^{} z^{} + b^{})$'.format(i, i, i-1, i-1, i-1), 
                       fontdict = {'fontsize' : 24})
             else:
@@ -486,53 +491,69 @@ def simulate(samples, X, y, features=2, data_="blobs", architecture=[2, 2, 1]):
         fig = plt.figure()
         ax = Axes3D(fig)
                 
-        major_ticks = np.arange(0.0, 1.1, 0.2)
-        minor_ticks = np.arange(0.0, 1.1, 0.1)
+        major_ticks = np.arange(0.0, 1.0, 0.2)
+        minor_ticks = np.arange(0.0, 1.0, 0.1)
         
-        ax.set_xticks(major_ticks)
-        ax.set_xticks(minor_ticks, minor=True)
-        ax.set_yticks(major_ticks)
-        ax.set_yticks(minor_ticks, minor=True)
-        ax.set_zticks(major_ticks)
-        ax.set_zticks(minor_ticks, minor=True)
+        #ax.set_xticks(major_ticks)
+        #ax.set_xticks(minor_ticks, minor=True)
+        #ax.set_yticks(major_ticks)
+        #ax.set_yticks(minor_ticks, minor=True)
+        #ax.set_zticks(major_ticks)
+        #ax.set_zticks(minor_ticks, minor=True)
         
         # Or if you want different settings for the grids:
-        ax.grid(which='minor', alpha=0.35)
-        ax.grid(which='major', alpha=1)
+        #ax.grid(which='minor', alpha=0.35)
+        #ax.grid(which='major', alpha=1)
         
         #fig = plt.figure()
         #ax = fig.gca(projection='3d')
-        x_ = np.linspace(0, 1, 6)
-        y_ = np.linspace(0, 1, 6)
+        x_ = np.linspace(-0.1, 1.05, 4)
+        y_ = np.linspace(-0.1, 1.05, 4)
         X_, Y_ = np.meshgrid(x_, y_)
-        Z = (d - a*X_ - b*Y_) / c
-        surf = ax.plot_surface(X_, Y_, Z, color = 'green', alpha=0.2, linewidth=1)
-        ax.scatter(layers[1].T[:, 0], layers[1].T[:, 1], layers[1].T[:, 2], c=y.T.reshape(-1), cmap=plt.cm.coolwarm, alpha=0.55)
-        
-        plt.xlim(0.0, 1.0)
-        plt.ylim(0.0, 1.0)
+        Z = (-d - a*X_ - b*Y_) / c
+        surf = ax.plot_surface(X_, Y_, Z, color = 'skyblue', alpha=0.6, linewidth=1, label=r'Level plane: $\{x \in [0, 1]^3 \colon \sigma(A^1 x+b^1)=0.5 \}$')
+        ax.scatter(layers[1].T[:, 0], layers[1].T[:, 1], layers[1].T[:, 2], c=y.T.reshape(-1), cmap=plt.cm.coolwarm, alpha=0.75)
+        surf._facecolors2d=surf._facecolors3d
+        surf._edgecolors2d=surf._edgecolors3d
+
+        plt.xlim(-0.05, 1.05)
+        plt.ylim(-0.05, 1.0)
         ax.set_zlim(0.0, 1.0)
         
         #for angle in range(0,360):
-        ax.view_init(elev=5, azim=-70)
-        #ax.view_init(30, 30)
+        # Des angles bien: (elev=5, azim=-70)
+        #for angle in range(0, 360):
+        #ax.view_init(elev=5, azim=-70)
+        #ax.view_init(elev=35, azim=-70)
         
+        ax.legend(loc='upper center', bbox_to_anchor=(0.5, -0.075),
+                      fancybox=True, shadow=True, ncol=5, fontsize=18)
         plt.xlabel(r'$z^{}_1$ coordinate'.format(i), fontdict = {'fontsize' : 16})
         plt.ylabel(r'$z^{}_2$ coordinate'.format(i), fontdict = {'fontsize' : 16})
-        plt.title(r'Hidden layer nb.{}: $z^{} = \sigma(A^{} z^{} + b^{})$'.format(i, i, i-1, i-1, i-1), 
+        plt.title(r'Separation before output layer: $z^{} = \sigma(A^{} z^{} + b^{})$'.format(i, i-1, i-1, i-1), 
                      fontdict = {'fontsize' : 24})
+        #plt.legend(loc='upper center', bbox_to_anchor=(0.5, -0.075),
+        #              fancybox=True, shadow=True, ncol=5, fontsize=18)
         plt.savefig('figures/visual_trans/{}/{}/{}d/{}.svg'.format(data_, samples, architecture[1], '2-5'), format='svg')
         
     
 if __name__ == "__main__":
     #simulate(8, data_='blobs')
     #simulate(25, features=1, data_='blobs', architecture=[1, 2, 1])
-    samples = 12
-    #X, y = generate_points_1d(nb=samples, centers=[-1, 0, 1], labels=[1, 0, 1])
-    X = np.array([[-0.08429253, -0.11161125, -0.16280399, -0.86931755,  0.26336258,  0.38847008,
-                   0.50250804,  0.84192296,  1.9465443,   1.51431575,  1.57453649,  1.97647123]])
-    y = np.array([[1, 1, 1, 1, 0, 0, 0, 0, 1, 1, 1, 1]])
-    simulate(12, X, y, features=1, data_='q_random', architecture=[1, 3, 1])
+    samples = 16
+    #X, y = generate_points_1d(nb=samples, centers=[-1, 0, 1, 2], labels=[1, 0, 1, 0])
+    
+    X = np.array([[-0.78803037, -0.72071775, -0.91613293, -0.21382119,  0.69886267,  0.49367688,
+                   0.60827135,  0.01519475,  1.87121082,  1.05673907,  1.99584817,  1.35611186,
+                   2.91351248,  2.15228855,  2.43602071,  2.26404442]])
+    y = np.array([[1, 1, 1, 1, 0, 0, 0, 0, 1, 1, 1, 1, 0, 0, 0, 0]])
+    simulate(16, X, y, features=1, data_='q_random', architecture=[1, 3, 1])
+    
+    ##### 12 points works nicely
+    ####X = np.array([[-0.08429253, -0.11161125, -0.16280399, -0.86931755,  0.26336258,  0.38847008,
+    ####               0.50250804,  0.84192296,  1.9465443,   1.51431575,  1.57453649,  1.97647123]])
+    ####y = np.array([[1, 1, 1, 1, 0, 0, 0, 0, 1, 1, 1, 1]])
+    ####simulate(12, X, y, features=1, data_='q_random', architecture=[1, 1, 1])
     
     
 ###    # Just plot the activation functions 

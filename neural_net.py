@@ -273,7 +273,6 @@ class NeuralNetwork(object):
             
             Z = self.predict(np.c_[xx.ravel()].T)
             Z = Z.reshape(xx.shape)
-            
         
             # We superpose the data points
             red = list()
@@ -305,8 +304,9 @@ class NeuralNetwork(object):
             plt.plot(red, len(red)*[0], 'o', c='r', alpha=0.55)
             plt.plot(blue, len(blue)*[0], 'o', c='b', alpha=0.55)
     
-            plt.plot(xx[Z>0], [0.65]*(Z[Z>0]), c= 'r', linewidth=5, alpha=0.75, label=r'$\{f_L(\Theta, \cdot)>0.5\}$')
-            plt.plot(xx[Z==0], [0.65]*(Z[Z==0]+np.ones(len(Z[Z==0]))), c='b', linewidth=5, alpha=0.75, label=r'$\{f_L(\Theta, \cdot)\leq 0.5\}$')
+            plt.plot(xx[Z>0], [0]*(Z[Z>0]), '.', c= 'r', alpha=0.55, label=r'$\{f_L(\Theta, \cdot)>0.5\}$')
+            plt.plot(xx[Z==0], [0]*(Z[Z==0]+np.ones(len(Z[Z==0]))), '.', c='b', alpha=0.55, label=r'$\{f_L(\Theta, \cdot)\leq 0.5\}$')
+            plt.plot(xx, Z, linewidth=4, color='gray', alpha=0.3, label=r'$F(x)$')
             plt.xlabel(r'$x$', fontdict = {'fontsize' : 16})
             plt.title(r'The level sets of $F(x) = \chi_{  \{f_L(\Theta, \cdot)>0.5\} }(x)$', fontdict = {'fontsize' : 24})
             plt.legend(loc='upper center', bbox_to_anchor=(0.5, -0.075),
