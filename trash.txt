@@ -6,6 +6,95 @@ Created on Fri Jan 31 17:48:09 2020
 @author: dycon
 """
 
+#    A0 = np.array( [[4.8701551], [-0.96920]] )
+#    b0 = np.array( [[0.28776318], [1.97254]] )
+#    X = np.array([[-0.15676208, -0.93479563,  0.80776068,  0.8585791,  1.25119722,  1.39244874,
+#                   2.08144731,  2.42317776]])
+#    y = np.array([[1, 1, 0, 0, 1, 1, 0, 0]])
+#    A1 = np.array([[-3.85460125,  4.44553152]])
+#    b1 = np.array([ 0.19 ])
+#    
+#    red = list()
+#    blue = list()
+#    for i, x in enumerate(X[0]):
+#        if y[0][i] == 0:
+#            blue.append(x)
+#        else:
+#            red.append(x)
+#    plt.figure()
+#    plt.yticks(color='w')
+#        
+#    plt.plot(blue, len(blue)*[0], 'o', c='b', alpha=0.55)
+#    plt.plot(red, len(red)*[0], 'o', c='r', alpha=0.55)
+#
+#    aux_lambda1 = np.array([lambdas(A0, b0, X[0][i]) for i in range(len(X[0]))])
+#    lambda_1 = np.array([[ _[0][0] for _ in aux_lambda1 ], [_[1][0] for _ in aux_lambda1]])
+#       
+#    plt.figure()
+#    plt.scatter(lambda_1.T[:, 0], lambda_1.T[:, 1], c=y.T.reshape(-1), cmap=plt.cm.coolwarm, alpha=0.55)
+#    
+#    aux_sigma1 = np.array([sigmas(A0, b0, X[0][i]) for i in range(len(X[0]))])
+#    sigma_1 = np.array([[ _[0][0] for _ in aux_sigma1 ], [_[1][0] for _ in aux_sigma1]])
+#    
+#    plt.figure()
+#    plt.scatter(sigma_1.T[:, 0], sigma_1.T[:, 1], c=y.T.reshape(-1), cmap=plt.cm.coolwarm, alpha=0.55)
+
+
+##           # We can only visualize up to 3d
+#            # If the k-th layer has 1 neuron (generally output layer) 
+#            if architecture[k] == 1: 
+#                _ = copy.deepcopy([ lambdas(weights[k-1], biases[k-1], 
+#                                      [[layers[k-1][0][i]], [layers[k-1][1][i]]] ) 
+#                                      for i in range(samples) ])
+##
+#                transitions.append(np.array([l[0][0] for l in _]))
+###                
+###                # Then we store the activation of these linear transformations
+#                __ = copy.deepcopy([ sigmas(weights[k-1], biases[k-1], 
+#                                      [[layers[k-1][0][i]], [layers[k-1][1][i]]] ) 
+#                                      for i in range(samples) ])
+#                layers.append(np.array([l[0][0] for l in __]))
+##            
+#            elif architecture[k]==2:
+#                # We first store the linear transformations to be plotted
+#                if len(layers[k-1])==1:
+#                    _ = copy.deepcopy([ lambdas(weights[k-1], biases[k-1], 
+#                                     [layers[k-1][0][i]]) 
+#                                      for i in range(samples)])
+#                    transitions.append(np.array( [[l[0][0] for l in _], [l[1][0] for l in _]] ))
+#                
+#                # Then we store the activation of these linear transformations
+#                    __ = copy.deepcopy([ sigmas(weights[k-1], biases[k-1], 
+#                                     [layers[k-1][0][i]]) 
+#                                      for i in range(samples)])
+#                    layers.append(np.array( [[s[0][0] for s in __], [s[1][0] for s in __]] ))
+#                
+#                else:
+#                    _ = copy.deepcopy([ lambdas(weights[k-1], biases[k-1], 
+#                                     [ [layers[k-1][0][i]], [layers[k-1][1][i]] ]) 
+#                                      for i in range(samples)])
+#                    transitions.append(np.array( [[l[0][0] for l in _], [l[1][0] for l in _]] ))
+#                
+#                    # Then we store the activation of these linear transformations
+#                    __ = copy.deepcopy([ sigmas(weights[k-1], biases[k-1], 
+#                                     [ [layers[k-1][0][i]], [layers[k-1][1][i]] ]) 
+#                                      for i in range(samples)])
+#                    layers.append(np.array( [[s[0][0] for s in __], [s[1][0] for s in __]] ))
+#            
+#            elif architecture[k]==3:
+#                _ = copy.deepcopy( [ lambdas(weights[k-1], biases[k-1], 
+#                                     [ [layers[k-1][0][i]], [layers[k-1][1][i]],  [layers[k-1][2][i]] ]) 
+#                                      for i in range(samples)] )
+#                transitions.append( np.array( [[l[0][0] for l in _], [l[1][0] for l in _], [l[2][0] for l in _]] ) )
+#                
+#                # Then we store the activation of these linear transformations
+#                __ = copy.deepcopy([ sigmas(weights[k-1], biases[k-1], 
+#                                     [ [layers[k-1][0][i]], [layers[k-1][1][i]], [layers[k-1][2][i]] ]) 
+#                                      for i in range(samples)])
+#                layers.append(np.array( [[s[0][0] for s in __], [s[1][0] for s in __], [s[2][0] for s in __]] ))
+#            else:
+#                pass
+
 #=============================================================================#
     
 ### UN EXEMPLE

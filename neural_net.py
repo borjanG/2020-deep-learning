@@ -13,6 +13,7 @@ __version__ = "0.1"
 import matplotlib
 matplotlib.rcParams['figure.figsize'] = (10.0, 10.0)
 from matplotlib import pyplot as plt
+from matplotlib.ticker import FormatStrFormatter, MultipleLocator
 import numpy as np
 
 # won't use scikit but some help functions 
@@ -264,11 +265,11 @@ class NeuralNetwork(object):
             plt.xlabel(r'$x_1$ coordinate', fontdict = {'fontsize' : 13.5})
             plt.ylabel(r'$x_2$ coordinate', fontdict = {'fontsize' : 13.5})
             plt.title(r'The level sets of $F(x) = \chi_{  \{f_L(\Theta, \cdot)>0.5\} }(x)$', fontdict = {'fontsize' : 22})
-        
+            plt.savefig('figures/5-2.svg', format='svg')
         else:
             
-            x_min = X[:, 0].min() -0.1
-            x_max = X[:, 0].max() +0.1
+            x_min = X[:, 0].min()-0.25
+            x_max = X[:, 0].max()+0.25
             xx = np.arange(x_min, x_max, res)
             
             Z = self.predict(np.c_[xx.ravel()].T)
@@ -286,31 +287,34 @@ class NeuralNetwork(object):
                 
             fig = plt.figure()
             ax = fig.add_subplot(1, 1, 1)
-            major_ticks_x = np.linspace(x_min, x_max, 11)
-            minor_ticks_x = np.linspace(x_min, x_max, 21)
-            major_ticks_y = np.linspace(0.0, 1.0, 11)
-            minor_ticks_y = np.linspace(0.0, 1.0, 21)
+            major_ticks_x = np.linspace(x_min, x_max, 7)
+            minor_ticks_x = np.linspace(x_min, x_max, 13)
+            major_ticks_y = np.linspace(0.0, 1.0, 7)
+            minor_ticks_y = np.linspace(0.0, 1.0, 13)
             
             ax.set_xticks(major_ticks_x)
             ax.set_xticks(minor_ticks_x, minor=True)
             ax.set_yticks(major_ticks_y)
             ax.set_yticks(minor_ticks_y, minor=True)
             
-            ax.grid(which='minor', alpha=0.35)
-            ax.grid(which='major', alpha=1)
-            plt.xlim(xx.min(), xx.max())
-            plt.ylim(-0.1, 1.1)
+            ax.grid(which='minor', alpha=0.25, ls='-.')
+            ax.grid(which='major', alpha=0.75, ls='-.')
+            plt.xlim(xx.min(), xx.max()+0.01)
+            plt.ylim(-0.05, 1.05)
                 
-            plt.plot(red, len(red)*[0], 'o', c='r', alpha=0.55)
-            plt.plot(blue, len(blue)*[0], 'o', c='b', alpha=0.55)
-    
-            plt.plot(xx[Z>0], [0]*(Z[Z>0]), '.', c= 'r', alpha=0.55, label=r'$\{f_L(\Theta, \cdot)>0.5\}$')
-            plt.plot(xx[Z==0], [0]*(Z[Z==0]+np.ones(len(Z[Z==0]))), '.', c='b', alpha=0.55, label=r'$\{f_L(\Theta, \cdot)\leq 0.5\}$')
-            plt.plot(xx, Z, linewidth=4, color='gray', alpha=0.3, label=r'$F(x)$')
-            plt.xlabel(r'$x$', fontdict = {'fontsize' : 16})
+            plt.plot(xx, Z, linewidth=4, color='gray', alpha=0.5, label=r'$F(x)$')
+            plt.plot(xx[Z>0], [-0.0425]*(Z[Z>0]), 'o', linewidth=6.5, c= 'r', alpha=0.75, label=r'$\{f_L(\Theta, \cdot)>0.5\}$')
+            plt.plot(xx[Z==0], [-0.0425]*(Z[Z==0]+np.ones(len(Z[Z==0]))), 'o', linewidth=6.5,  c='b', alpha=0.75, label=r'$\{f_L(\Theta, \cdot)\leq 0.5\}$')
+            plt.plot(red, len(red)*[0], 'o', c='r', alpha=0.95)
+            plt.plot(blue, len(blue)*[0], 'o', c='b', alpha=0.95)
+        
             plt.title(r'The level sets of $F(x) = \chi_{  \{f_L(\Theta, \cdot)>0.5\} }(x)$', fontdict = {'fontsize' : 24})
             plt.legend(loc='upper center', bbox_to_anchor=(0.5, -0.075),
-                      fancybox=True, shadow=True, ncol=5, fontsize=18)
+                      fancybox=True, shadow=True, ncol=5, fontsize=20)
+            ax.tick_params(axis = 'both', which = 'major', labelsize = 22)
+            ax.xaxis.set_major_formatter(FormatStrFormatter('%.2f'))
+            ax.yaxis.set_major_formatter(FormatStrFormatter('%.2f'))
+            ax.set_yticklabels(['0', '', '', '', '', '', '1' ])
             plt.savefig('figures/6.svg', format='svg')
             
             fig2 = plt.figure()
@@ -320,18 +324,23 @@ class NeuralNetwork(object):
             ax2.set_yticks(major_ticks_y)
             ax2.set_yticks(minor_ticks_y, minor=True)
             
-            # Or if you want different settings for the grids:
-            ax2.grid(which='minor', alpha=0.25)
-            ax2.grid(which='major', alpha=1)
+            ax2.grid(which='minor', alpha=0.25, ls='-.')
+            ax2.grid(which='major', alpha=0.75, ls='-.')
             
-            plt.plot(xx, Z, linewidth=4, color='green', alpha=0.45, label=r'$F(x) = \chi_{  \{f_L(\Theta, \cdot)>0.5\}  }(x)$')
-            plt.title(r'Final result; Iterations = {}'.format(iteration+1), fontdict = {'fontsize' : 24})
-            plt.xlabel(r'$x$', fontdict = {'fontsize' : 16})
-            plt.xlim(xx.min(), xx.max())
-            plt.ylim(-0.1, 1.1)
+            plt.plot(xx, Z, linewidth=5, color='teal', alpha=0.5, label=r'$F(x) = \chi_{  \{f_L(\Theta, \cdot)>0.5\}  }(x)$')
+            plt.title(r'Final result @ iteration = {}'.format(iteration+1), fontdict = {'fontsize' : 24})
+            #plt.xlabel(r'$x$', fontdict = {'fontsize' : 20})
+            plt.xlim(xx.min(), xx.max()+0.01)
+            plt.ylim(-0.05, 1.05)
+            ax2.tick_params(axis = 'both', which = 'major', labelsize = 22)
+            ax2.set_yticklabels(['0', '', '', '', '', '', '1' ])
+            
+            ax2.xaxis.set_major_formatter(FormatStrFormatter('%.2f'))
+            ax2.yaxis.set_major_formatter(FormatStrFormatter('%.2f'))
+            ax2.set_yticklabels(['0', '', '', '', '', '', '1' ])
             
             plt.legend(loc='upper center', bbox_to_anchor=(0.5, -0.075),
-                      fancybox=True, shadow=True, ncol=5, fontsize=18)
+                      fancybox=True, shadow=True, ncol=5, fontsize=20)
             plt.savefig('figures/5.svg', format='svg')
         # Fix this /!\
         #plt.savefig('figures/fig_%s.png' % iteration, dpi=450)                                                                                                  val_acc)
