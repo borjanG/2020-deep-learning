@@ -1,4 +1,4 @@
-%% Burgers equation and chaos
+%% Cubic heat
 nn = 256;
 steps = 200;
 
@@ -21,6 +21,6 @@ x = linspace(-8,8,nn+1);
 x = x(1:end-1);
 t = tspan;
 % pcolor(t,x,real(usol)); shading interp, axis tight, colormap(jet);
-save('burgers_sine.mat','t','x','usol')
+save('cubic_heat.mat','t','x','usol')
 
 
