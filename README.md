@@ -1,3 +1,5 @@
 # Neural networks and deep learning
 
-In construction.
+Some experimenting with elementary neural nets.
+
+A developed neural network software package coming soon.
